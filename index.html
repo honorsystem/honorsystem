@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive design meta tag -->
     <title>User Profile</title>
     <style>
         body {
@@ -10,21 +11,9 @@
             padding: 20px;
             color: #333;
             line-height: 1.6;
-        }
-        @keyframes rainbow {
-            0% {color: red;}
-            14% {color: orange;}
-            28% {color: yellow;}
-            42% {color: green;}
-            57% {color: blue;}
-            71% {color: indigo;}
-            85% {color: violet;}
-            100% {color: red;}
+            transition: all 0.3s ease;
         }
 
-        .rainbow-text {
-            animation: rainbow 5s infinite;
-        }
         .top-container {
             width: 100%;
             height: 250px; 
@@ -45,7 +34,9 @@
         }
 
         h1 {
-            color: #FF0000; /* Red */
+            background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+            -webkit-background-clip: text;
+            color: transparent;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin-bottom: 10px;
             font-size: 2em;
@@ -55,7 +46,7 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            border: 5px solid #FF7F00; /* Orange */
+            border: 5px solid white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
@@ -64,37 +55,34 @@
             transform: scale(1.1);
         }
 
-        strong {
-            color: #FFFF00; /* Yellow */
-        }
-
         textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #7FFF00; /* Chartreuse */
+            border: 1px solid #7FFF00;
             border-radius: 5px;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-            transition: border 0.3s ease;
-            color: #00FF00; /* Lime */
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+            color: #00FF00;
         }
 
         textarea:focus, input[type="text"]:focus {
-            border-color: #00FF7F; /* SpringGreen */
+            border-color: #00FF7F;
+            box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.1);
         }
 
         button {
             padding: 10px 20px;
-            background-color: #00FFFF; /* Aqua */
+            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
             border: none;
             border-radius: 5px;
-            color: #0000FF; /* Blue */
+            color: white;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         button:hover {
-            background-color: #8A2BE2; /* BlueViolet */
+            background: linear-gradient(to left, red, orange, yellow, green, blue, indigo, violet);
             transform: translateY(-3px);
         }
 
@@ -104,13 +92,19 @@
 
         .nested {
             margin-left: 20px;
-            color: #9400D3; /* Violet */
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #aaa;
         }
     </style>
 </head>
 <body>
     <div class="top-container">
-        <h1>class="rainbow-text">User Profile</h1>
+        <h1>User Profile</h1>
         <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
     <p><strong>Name:</strong> <input type="text" id="name"></p>
@@ -133,6 +127,10 @@
     </div>
     <button onclick="saveChanges()">Save Changes</button>
 
+    <footer>
+        &copy; 2023 User Profile. All rights reserved.
+    </footer>
+
     <script>
         const url = 'https://honorsystem.github.io/honorsystem/data.json';
         fetch(url)
@@ -144,12 +142,12 @@
                 document.getElementById("location").value = data.location;
                 document.getElementById("skills").value = data.skills.join(', ');
                 document.getElementById("memberOf").value = data.memberOf.name;
-                document.getElementById("orgName").value = data.memberOf.organizationName; // Example nested field
+                document.getElementById("orgName").value = data.memberOf.organizationName;
                 document.getElementById("owns").value = data.owns.name;
-                document.getElementById("productName").value = data.owns.productName; // Example nested field
+                document.getElementById("productName").value = data.owns.productName;
                 document.getElementById("knowsAbout").value = data.knowsAbout.join(', ');
                 document.getElementById("relatedTo").value = data.relatedTo.name;
-                document.getElementById("relationName").value = data.relatedTo.relationName; // Example nested field
+                document.getElementById("relationName").value = data.relatedTo.relationName;
         
                 // Set the document's title using the username
                 document.title = `${data.name}'s Profile`;
