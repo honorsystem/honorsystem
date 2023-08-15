@@ -117,6 +117,24 @@
 
             console.log(updatedData);
         }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("name").value = data.name;
+                document.getElementById("email").value = data.email;
+                document.getElementById("description").value = data.description;
+                document.getElementById("location").value = data.location;
+                document.getElementById("skills").value = data.skills.join(', ');
+                document.getElementById("memberOf").value = data.memberOf.name;
+                document.getElementById("owns").value = data.owns.name;
+                document.getElementById("knowsAbout").value = data.knowsAbout.join(', ');
+                document.getElementById("relatedTo").value = data.relatedTo.name;
+        
+                // Set the document's title using the username
+                document.title = `${data.name}'s Profile`;
+            })
+            .catch(error => console.error('Error fetching the JSON data:', error));
+
     </script>
 </body>
 </html>
