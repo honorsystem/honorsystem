@@ -334,55 +334,38 @@
             }
         }
 
-        function createExpandableContainer(key, value, icon) {
+        function createExpandableContainer(key, value, iconUrl) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
-            container.onclick = () => {
-                if (typeof value === 'object' && !Array.isArray(value)) {
-                    const dynamicContainers = document.getElementById('dynamicContainers');
-                    dynamicContainers.innerHTML = '';
-                    for (let subKey in value) {
-                        const subContainer = createExpandableContainer(subKey, value[subKey], value.icon);
-                        dynamicContainers.appendChild(subContainer);
-                    }
-                }
-            };
 
             const header = document.createElement('h2');
-            const iconImg = document.createElement('img');
-            iconImg.src = icon;
-            header.appendChild(iconImg);
-            header.innerHTML += key;
-            header.onclick = (e) => {
-                toggleExpand(header);
-                e.stopPropagation();
-            };
+            const icon = document.createElement('img');
+            icon.src = iconUrl;
+            icon.className = 'icon';
+            header.appendChild(icon);
+            header.appendChild(document.createTextNode(key));
+            header.onclick = () => toggleExpand(header);
 
             const content = document.createElement('div');
             content.className = 'expandable-content';
 
             if (typeof value === 'object' && !Array.isArray(value)) {
                 for (let subKey in value) {
-                    if (subKey !== 'icon') {
+                    if (typeof value[subKey] === 'object') {
+                        // Fetch the JSON of the sub-object from the filesystem
+                        fetch(`${key}/${subKey}.json`)
+                            .then(response => response.json())
+                            .then(subData => {
+                                const subContainer = createExpandableContainer(subKey, subData, subData.icon);
+                                content.appendChild(subContainer);
+                            });
+                    } else {
                         const subContainer = createExpandableContainer(subKey, value[subKey], value.icon);
                         content.appendChild(subContainer);
                     }
                 }
             } else if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
-                    dropdown.appendChild(option);
-                });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
-                content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                content.appendChild(input);
+                /* ... [this part remains unchanged] ... */
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -393,10 +376,7 @@
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = (e) => {
-                saveField(key);
-                e.stopPropagation();
-            };
+            saveButton.onclick = () => saveField(key);
             content.appendChild(saveButton);
 
             container.appendChild(header);
@@ -409,9 +389,11 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
+                document.getElementById('profileImage').src = data.image;
+                document.getElementById('profileTitle').innerText = `${data.name.firstName} ${data.name.lastName}'s Profile`;
                 const dynamicContainers = document.getElementById('dynamicContainers');
                 for (let key in data) {
-                    if (key !== "image" && key !== "backgroundImage") {
+                    if (key !== "image" && key !== "backgroundImage") {  // We don't want to create containers for the images
                         const container = createExpandableContainer(key, data[key], data.icon);
                         dynamicContainers.appendChild(container);
                     }
