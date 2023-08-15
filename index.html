@@ -11,7 +11,20 @@
             color: #333;
             line-height: 1.6;
         }
+        @keyframes rainbow {
+            0% {color: red;}
+            14% {color: orange;}
+            28% {color: yellow;}
+            42% {color: green;}
+            57% {color: blue;}
+            71% {color: indigo;}
+            85% {color: violet;}
+            100% {color: red;}
+        }
 
+        .rainbow-text {
+            animation: rainbow 5s infinite;
+        }
         .top-container {
             width: 100%;
             height: 250px; 
@@ -97,7 +110,7 @@
 </head>
 <body>
     <div class="top-container">
-        <h1>User Profile</h1>
+        <h1>class="rainbow-text">User Profile</h1>
         <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
     <p><strong>Name:</strong> <input type="text" id="name"></p>
