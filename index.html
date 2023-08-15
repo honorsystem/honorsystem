@@ -7,10 +7,9 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            background: #f4f4f4;
             padding: 20px;
-            color: #fff;
-            line-height: 1.6;
+            color: #333;
         }
 
         .top-container {
@@ -27,42 +26,20 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        h1 {
-            background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
-            -webkit-background-clip: text;
-            color: transparent;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-            margin-bottom: 10px;
-            font-size: 2em;
-        }
-
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
         .expandable-container {
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
             overflow: hidden;
             transition: max-height 0.3s ease-in-out;
-            max-height: 30px;
+            max-height: 40px;  /* Adjusted height */
         }
 
         .expandable-container h2 {
             margin: 0;
             padding: 10px;
             cursor: pointer;
-            background: rgba(0, 0, 0, 0.3);
-            transition: background 0.3s ease;
-        }
-
-        .expandable-container h2:hover {
-            background: rgba(0, 0, 0, 0.5);
+            background: #e7e7e7;
         }
 
         .expandable-content {
@@ -73,34 +50,25 @@
         textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #7FFF00;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            background: rgba(0, 0, 0, 0.5);
-            color: #00FF00;
         }
 
         button {
             padding: 10px 20px;
-            background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+            background: #333;
             border: none;
             border-radius: 5px;
             color: white;
             cursor: pointer;
             margin-top: 20px;
-            transition: transform 0.3s ease;
         }
 
         button:hover {
-            transform: translateY(-3px);
+            background: #555;
         }
 
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            font-size: 0.8em;
-            color: #aaa;
-        }
     </style>
 </head>
 <body>
@@ -123,23 +91,26 @@
         </div>
     </div>
 
+    <div class="expandable-container">
+        <h2 onclick="toggleExpand(this)">Description</h2>
+        <div class="expandable-content">
+            <textarea id="description" rows="4"></textarea>
+        </div>
+    </div>
+
     <!-- ... similar structure for other fields ... -->
 
     <button onclick="saveChanges()">Save Changes</button>
-
-    <footer>
-        © 2023 User Profile. All rights reserved.
-    </footer>
 
     <script>
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "300px";
+                element.parentElement.style.maxHeight = "300px";  /* Adjusted height */
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "30px";
+                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
             }
         }
 
@@ -149,6 +120,7 @@
             .then(data => {
                 document.getElementById("name").value = data.name;
                 document.getElementById("email").value = data.email;
+                document.getElementById("description").value = data.description;
                 // ... rest of the data binding ...
 
                 document.title = `${data.name}'s Profile`;
