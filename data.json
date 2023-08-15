@@ -1,61 +1,48 @@
 {
-  "id": "12345",
-  "username": "JohnDoe",
-  "displayName": "John Doe",
-  "email": "johndoe@example.com",
-  "profileImage": "https://i.imgur.com/YTFyCYO.jpg",
-  "skills": [
-    "Carpentry",
-    "Web Development"
-  ],
-  "resources": [
-    "Woodworking Tools",
-    "Web Hosting"
-  ],
-  "badges": [
-    {
-      "name": "Master Carpenter",
-      "description": "Recognized for advanced carpentry skills.",
-      "dateEarned": "2023-01-15"
-    },
-    {
-      "name": "Web Dev Pro",
-      "description": "Completed 50+ web development projects.",
-      "dateEarned": "2022-11-10"
-    }
-  ],
-  "projects": [
-    {
-      "name": "Community Park Bench",
-      "role": "Carpenter",
-      "status": "Completed"
-    },
-    {
-      "name": "Local Business Website",
-      "role": "Web Developer",
-      "status": "In Progress"
-    }
-  ],
-  "events": [
-    {
-      "name": "Web Dev Workshop",
-      "date": "2023-02-20",
-      "role": "Attendee"
-    }
-  ],
-  "groups": [
-    "Green Builders",
-    "Web Dev Enthusiasts"
-  ],
-  "posts": [
-    {
-      "type": "Offer",
-      "content": "Offering a carpentry workshop next weekend. DM for details.",
-      "date": "2023-01-05"
-    }
-  ],
-  "tokens": {
-    "GreenCoin": 150,
-    "SkillToken": 230
-  }
+  "id": "1",
+  "createdAt": "2023-07-06T14:48:00.000Z",
+  "updatedAt": "2023-07-06T14:48:00.000Z",
+  "type": "PERSON",
+  "trueUser": null,
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "profilePicture": "https://example.com/profile.jpg",
+  "bio": "Hello, I'm John Doe!",
+  "location": "New York, USA",
+  "myEvents": [],
+  "skills": [],
+  "resources": [],
+  "projects": [],
+  "orgs": [],
+  "tasks": [],
+  "roles": [],
+  "badges": [],
+  "groups": [],
+  "products": [],
+  "services": [],
+  "offers": [],
+  "requests": [],
+  "gratisPoints": {
+    "id": "1",
+    "user": "1",
+    "points": 1000,
+    "createdAt": "2023-07-06T14:48:00.000Z",
+    "updatedAt": "2023-07-06T14:48:00.000Z"
+  },
+  "posts": [],
+  "comments": [],
+  "interests": [],
+  "gifts": [],
+  "purchases": [],
+  "inGameTokens": {
+    "id": "1",
+    "user": "1",
+    "tokens": 500,
+    "createdAt": "2023-07-06T14:48:00.000Z",
+    "updatedAt": "2023-07-06T14:48:00.000Z"
+  },
+  "friends": [],
+  "friendRequests": []
 }
