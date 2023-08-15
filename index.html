@@ -30,30 +30,24 @@
     <button onclick="saveChanges()">Save Changes</button>
 
     <script>
-        const url = 'https://api.github.com/repos/onelocaladmin/onelocalwebsite/contents/data.json';
-        const token = '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'; // Replace with your token
-
-        let currentSHA;
-
+        const url = 'https://raw.githubusercontent.com/onelocaladmin/onelocalwebsite/main/data.json';
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                const userData = JSON.parse(atob(data.content));
-                currentSHA = data.sha;
-                document.getElementById("firstName").value = userData.firstName;
-                document.getElementById("lastName").value = userData.lastName;
-                document.getElementById("email").value = userData.email;
-                document.getElementById("password").value = userData.password;
-                document.getElementById("profilePicture").src = userData.profilePicture;
-                document.getElementById("bio").value = userData.bio;
-                document.getElementById("location").value = userData.location;
-                document.getElementById("gratisPoints").value = userData.gratisPoints.points;
-                document.getElementById("inGameTokens").value = userData.inGameTokens.tokens;
+                document.getElementById("firstName").value = data.firstName;
+                document.getElementById("lastName").value = data.lastName;
+                document.getElementById("email").value = data.email;
+                document.getElementById("password").value = data.password;
+                document.getElementById("profilePicture").src = data.profilePicture;
+                document.getElementById("bio").value = data.bio;
+                document.getElementById("location").value = data.location;
+                document.getElementById("gratisPoints").value = data.gratisPoints.points;
+                document.getElementById("inGameTokens").value = data.inGameTokens.tokens;
                 // Continue in a similar fashion for other sections
             })
             .catch(error => console.error('Error fetching the JSON data:', error));
 
-        async function saveChanges() {
+        function saveChanges() {
             const updatedData = {
                 firstName: document.getElementById("firstName").value,
                 lastName: document.getElementById("lastName").value,
@@ -64,18 +58,8 @@
                 // ... add other fields as needed
             };
 
-            // Commit the updated content
-            await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': 'token ' + token
-                },
-                body: JSON.stringify({
-                    message: 'Update data.json',
-                    content: btoa(JSON.stringify(updatedData, null, 2)), // Encode content to base64
-                    sha: currentSHA
-                })
-            });
+            // Here you can send the updatedData to your server or save it in some other way
+            console.log(updatedData);
         }
     </script>
 </body>
