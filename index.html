@@ -32,7 +32,7 @@
         }
 
         h1 {
-            color: #fff;
+            color: #FF0000; /* Red */
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
             margin-bottom: 10px;
             font-size: 2em;
@@ -42,7 +42,7 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            border: 5px solid #fff;
+            border: 5px solid #FF7F00; /* Orange */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
@@ -51,37 +51,47 @@
             transform: scale(1.1);
         }
 
+        strong {
+            color: #FFFF00; /* Yellow */
+        }
+
         textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
-            border: 1px solid #ddd;
+            border: 1px solid #7FFF00; /* Chartreuse */
             border-radius: 5px;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
             transition: border 0.3s ease;
+            color: #00FF00; /* Lime */
         }
 
         textarea:focus, input[type="text"]:focus {
-            border-color: #3498db;
+            border-color: #00FF7F; /* SpringGreen */
         }
 
         button {
             padding: 10px 20px;
-            background-color: #3498db;
+            background-color: #00FFFF; /* Aqua */
             border: none;
             border-radius: 5px;
-            color: #fff;
+            color: #0000FF; /* Blue */
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         button:hover {
-            background-color: #2980b9;
+            background-color: #8A2BE2; /* BlueViolet */
             transform: translateY(-3px);
         }
 
         button:active {
             transform: translateY(0);
+        }
+
+        .nested {
+            margin-left: 20px;
+            color: #9400D3; /* Violet */
         }
     </style>
 </head>
@@ -96,9 +106,18 @@
     <p><strong>Location:</strong> <input type="text" id="location"></p>
     <p><strong>Skills:</strong> <input type="text" id="skills"></p>
     <p><strong>Member Of:</strong> <input type="text" id="memberOf"></p>
+    <div class="nested">
+        <p><strong>Organization Name:</strong> <input type="text" id="orgName"></p>
+    </div>
     <p><strong>Owns:</strong> <input type="text" id="owns"></p>
+    <div class="nested">
+        <p><strong>Product Name:</strong> <input type="text" id="productName"></p>
+    </div>
     <p><strong>Knows About:</strong> <input type="text" id="knowsAbout"></p>
     <p><strong>Related To:</strong> <input type="text" id="relatedTo"></p>
+    <div class="nested">
+        <p><strong>Relation Name:</strong> <input type="text" id="relationName"></p>
+    </div>
     <button onclick="saveChanges()">Save Changes</button>
 
     <script>
@@ -112,9 +131,12 @@
                 document.getElementById("location").value = data.location;
                 document.getElementById("skills").value = data.skills.join(', ');
                 document.getElementById("memberOf").value = data.memberOf.name;
+                document.getElementById("orgName").value = data.memberOf.organizationName; // Example nested field
                 document.getElementById("owns").value = data.owns.name;
+                document.getElementById("productName").value = data.owns.productName; // Example nested field
                 document.getElementById("knowsAbout").value = data.knowsAbout.join(', ');
                 document.getElementById("relatedTo").value = data.relatedTo.name;
+                document.getElementById("relationName").value = data.relatedTo.relationName; // Example nested field
         
                 // Set the document's title using the username
                 document.title = `${data.name}'s Profile`;
@@ -129,14 +151,17 @@
                 location: document.getElementById("location").value,
                 skills: document.getElementById("skills").value.split(', '),
                 memberOf: {
-                    name: document.getElementById("memberOf").value
+                    name: document.getElementById("memberOf").value,
+                    organizationName: document.getElementById("orgName").value
                 },
                 owns: {
-                    name: document.getElementById("owns").value
+                    name: document.getElementById("owns").value,
+                    productName: document.getElementById("productName").value
                 },
                 knowsAbout: document.getElementById("knowsAbout").value.split(', '),
                 relatedTo: {
-                    name: document.getElementById("relatedTo").value
+                    name: document.getElementById("relatedTo").value,
+                    relationName: document.getElementById("relationName").value
                 }
             };
 
