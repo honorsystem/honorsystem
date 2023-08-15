@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Profile</title>
+    <title>Luna's Profile</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -17,7 +18,7 @@
             flex-wrap: wrap;
             gap: 20px;
         }
-        
+
         .expandable-container {
             flex: 1;
             min-width: calc(90% - 10px);
@@ -25,11 +26,30 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-            max-height: 300px;
             overflow-y: auto;
-            cursor: pointer;
+            max-height: 300px;
+        }
+
+        .top-container {
+            width: 100%;
+            height: 250px;
+            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .expandable-container h2 {
@@ -38,6 +58,7 @@
             background: #e7e7e7;
             display: flex;
             align-items: center;
+            cursor: pointer;
         }
 
         .expandable-container h2 img {
@@ -51,7 +72,7 @@
             display: none;
         }
 
-        textarea, input[type="text"], select {
+        select, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -74,12 +95,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="top-container">
-        <h1 id="profileTitle">Dynamic Profile</h1>
-        <img id="profileImage" src="http://magicalworld.com/profiles/default.jpg" alt="Profile Image">
+        <h1 id="profileName">Luna's Profile</h1>
+        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
-    
+
     <div class="container" id="dynamicContainers">
         <!-- The expandable containers will be dynamically generated here -->
     </div>
@@ -118,26 +140,28 @@
             const header = document.createElement('h2');
             const icon = document.createElement('img');
             icon.src = iconUrl;
-            icon.className = 'icon';
             header.appendChild(icon);
             header.appendChild(document.createTextNode(key));
-            header.onclick = (e) => {
-                toggleExpand(header);
-                e.stopPropagation();  // Prevent the container's onclick from being triggered
-            };
+            header.onclick = () => toggleExpand(header);
 
             const content = document.createElement('div');
             content.className = 'expandable-content';
 
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                for (let subKey in value) {
-                    if (subKey !== 'icon') {  // We don't want to create fields for the icons
-                        const subContainer = createExpandableContainer(subKey, value[subKey], value.icon);
-                        content.appendChild(subContainer);
-                    }
-                }
-            } else if (Array.isArray(value)) {
-                /* ... [this part remains unchanged] ... */
+            if (Array.isArray(value)) {
+                const dropdown = document.createElement('select');
+                value.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.innerText = item;
+                    dropdown.appendChild(option);
+                });
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                content.appendChild(input);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -148,10 +172,7 @@
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = (e) => {
-                saveField(key);
-                e.stopPropagation();  // Prevent the container's onclick from being triggered
-            };
+            saveButton.onclick = () => saveField(key);
             content.appendChild(saveButton);
 
             container.appendChild(header);
@@ -160,25 +181,31 @@
             return container;
         }
 
-        function loadProfileData(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('profileImage').src = data.image;
-                    document.getElementById('profileTitle').innerText = `${data.name}'s Profile`;
-                    const dynamicContainers = document.getElementById('dynamicContainers');
-                    dynamicContainers.innerHTML = '';  // Clear previous containers
-                    for (let key in data) {
-                        if (key !== "image" && key !== "backgroundImage") {  // We don't want to create containers for the images
-                            const container = createExpandableContainer(key, data[key], data.icon);
-                            dynamicContainers.appendChild(container);
-                        }
-                    }
-                })
-                .catch(error => console.error('Error fetching the JSON data:', error));
-        }
+        const lunaData = {
+            "id": "luna",
+            "name": "Luna Starshine",
+            "type": "Human Mage",
+            "description": "Luna Starshine is a renowned mage known for her celestial magic. She's a seeker of knowledge and often embarks on quests to uncover ancient artifacts and secrets.",
+            "abilities": ["Starburst", "Celestial Sight", "Astral Projection"],
+            "icon": "https://i.imgur.com/YTFyCYO.jpg",
+            "image": "https://i.imgur.com/YTFyCYO.jpg",
+            "backgroundImage": "https://i.imgur.com/0SYKRVA.jpg",
+            "allies": ["aria_moonwhisper", "ember_dragon"],
+            "items": ["moonlit_wand"]
+        };
 
-        loadProfileData('https://honorsystem.github.io/honorsystem/data.json');  // Load the initial profile data
+        document.getElementById('profileName').innerText = lunaData.name;
+        document.getElementById('profileImage').src = lunaData.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${lunaData.backgroundImage})`;
+
+        const dynamicContainers = document.getElementById('dynamicContainers');
+        for (let key in lunaData) {
+            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
+                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
+                dynamicContainers.appendChild(container);
+            }
+        }
     </script>
 </body>
+
 </html>
