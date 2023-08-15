@@ -18,7 +18,7 @@
             margin-bottom: 10px;
         }
 
-        textarea, input[type="text"], input[type="password"], input[type="url"] {
+        textarea, input[type="text"], input[type="password"], input[type="email"] {
             width: 100%;
             margin-bottom: 10px;
             padding: 5px;
@@ -58,47 +58,47 @@
         button:hover {
             background-color: #52c6da;
         }
-
-        .section-title {
-            color: #f92672;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
     <h1>User Profile</h1>
     <div class="json-string">
-        <span class="json-key">"profilePicture"</span>: <span class="json-colon">:</span> <img id="profilePicture" src="#" alt="Profile Image"><span class="json-comma">,</span>
+        <span class="json-key">"id"</span>: <span class="json-colon">:</span> <input type="text" id="id"><span class="json-comma">,</span>
     </div>
     <div class="json-string">
-        <span class="json-key">"firstName"</span>: <span class="json-colon">:</span> <input type="text" id="firstName"><span class="json-comma">,</span>
+        <span class="json-key">"name"</span>: <span class="json-colon">:</span> First Name: <input type="text" id="firstName"> Last Name: <input type="text" id="lastName"><span class="json-comma">,</span>
     </div>
     <div class="json-string">
-        <span class="json-key">"lastName"</span>: <span class="json-colon">:</span> <input type="text" id="lastName"><span class="json-comma">,</span>
+        <span class="json-key">"email"</span>: <span class="json-colon">:</span> <input type="email" id="email"><span class="json-comma">,</span>
     </div>
     <div class="json-string">
-        <span class="json-key">"email"</span>: <span class="json-colon">:</span> <input type="text" id="email"><span class="json-comma">,</span>
+        <span class="json-key">"image"</span>: <span class="json-colon">:</span> <input type="text" id="image"><span class="json-comma">,</span>
     </div>
     <div class="json-string">
-        <span class="json-key">"password"</span>: <span class="json-colon">:</span> <input type="password" id="password"><span class="json-comma">,</span>
-    </div>
-    <div class="json-string">
-        <span class="json-key">"bio"</span>: <span class="json-colon">:</span> <textarea id="bio" rows="4"></textarea><span class="json-comma">,</span>
+        <span class="json-key">"description"</span>: <span class="json-colon">:</span> <textarea id="description" rows="4"></textarea><span class="json-comma">,</span>
     </div>
     <div class="json-string">
         <span class="json-key">"location"</span>: <span class="json-colon">:</span> <input type="text" id="location"><span class="json-comma">,</span>
     </div>
-
-    <h2 class="section-title">Skills</h2>
     <div class="json-string">
-        <span class="json-key">"name"</span>: <span class="json-colon">:</span> <input type="text" id="skillName"><span class="json-comma">,</span>
+        <span class="json-key">"skills"</span>: <span class="json-colon">:</span> <input type="text" id="skills"><span class="json-comma">,</span>
     </div>
     <div class="json-string">
-        <span class="json-key">"description"</span>: <span class="json-colon">:</span> <textarea id="skillDescription" rows="4"></textarea><span class="json-comma">,</span>
+        <span class="json-key">"memberOf"</span>: <span class="json-colon">:</span> Name: <input type="text" id="memberOfName"> Description: <input type="text" id="memberOfDescription"><span class="json-comma">,</span>
     </div>
-
-    <!-- ... Continue in a similar fashion for other sections like resources, organizations, events, etc. -->
-
+    <div class="json-string">
+        <span class="json-key">"knowsAbout"</span>: <span class="json-colon">:</span> <input type="text" id="knowsAbout"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"owns"</span>: <span class="json-colon">:</span> Name: <input type="text" id="ownsName"> Description: <input type="text" id="ownsDescription"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"worksFor"</span>: <span class="json-colon">:</span> <input type="text" id="worksFor"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"hasCredential"</span>: <span class="json-colon">:</span> Name: <input type="text" id="hasCredentialName"> Recognized By: <input type="text" id="hasCredentialRecognizedBy">
+    </div>
+    <!-- Add more sections as needed -->
     <button onclick="saveChanges()">Save Changes</button>
 
     <script>
@@ -106,31 +106,58 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                document.getElementById("firstName").value = data.firstName;
-                document.getElementById("lastName").value = data.lastName;
+                document.getElementById("id").value = data.id;
+                document.getElementById("firstName").value = data.name.firstName;
+                document.getElementById("lastName").value = data.name.lastName;
                 document.getElementById("email").value = data.email;
-                document.getElementById("password").value = data.password;
-                document.getElementById("profilePicture").src = data.profilePicture;
-                document.getElementById("bio").value = data.bio;
-                document.getElementById("location").value = data.location;
-                document.getElementById("skillName").value = data.skills[0].name;
-                document.getElementById("skillDescription").value = data.skills[0].description;
+                document.getElementById("image").value = data.image;
+                document.getElementById("description").value = data.description;
+                document.getElementById("location").value = data.location.address;
+                document.getElementById("skills").value = data.skills.itemListElement.join(', ');
+                document.getElementById("memberOfName").value = data.memberOf.name;
+                document.getElementById("memberOfDescription").value = data.memberOf.description;
+                document.getElementById("knowsAbout").value = data.knowsAbout.join(', ');
+                document.getElementById("ownsName").value = data.owns.name;
+                document.getElementById("ownsDescription").value = data.owns.description;
+                document.getElementById("worksFor").value = data.worksFor.name;
+                document.getElementById("hasCredentialName").value = data.hasCredential.name;
+                document.getElementById("hasCredentialRecognizedBy").value = data.hasCredential.recognizedBy;
                 // Continue in a similar fashion for other sections
             })
             .catch(error => console.error('Error fetching the JSON data:', error));
 
         function saveChanges() {
             const updatedData = {
-                firstName: document.getElementById("firstName").value,
-                lastName: document.getElementById("lastName").value,
+                id: document.getElementById("id").value,
+                name: {
+                    firstName: document.getElementById("firstName").value,
+                    lastName: document.getElementById("lastName").value
+                },
                 email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                bio: document.getElementById("bio").value,
-                location: document.getElementById("location").value,
-                skills: [{
-                    name: document.getElementById("skillName").value,
-                    description: document.getElementById("skillDescription").value
-                }]
+                image: document.getElementById("image").value,
+                description: document.getElementById("description").value,
+                location: {
+                    address: document.getElementById("location").value
+                },
+                skills: {
+                    itemListElement: document.getElementById("skills").value.split(', ')
+                },
+                memberOf: {
+                    name: document.getElementById("memberOfName").value,
+                    description: document.getElementById("memberOfDescription").value
+                },
+                knowsAbout: document.getElementById("knowsAbout").value.split(', '),
+                owns: {
+                    name: document.getElementById("ownsName").value,
+                    description: document.getElementById("ownsDescription").value
+                },
+                worksFor: {
+                    name: document.getElementById("worksFor").value
+                },
+                hasCredential: {
+                    name: document.getElementById("hasCredentialName").value,
+                    recognizedBy: document.getElementById("hasCredentialRecognizedBy").value
+                }
                 // ... add other fields as needed
             };
 
