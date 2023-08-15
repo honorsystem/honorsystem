@@ -33,10 +33,13 @@
         const url = 'https://api.github.com/repos/onelocaladmin/onelocalwebsite/contents/data.json';
         const token = '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'; // Replace with your token
 
+        let currentSHA;
+
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 const userData = JSON.parse(atob(data.content));
+                currentSHA = data.sha;
                 document.getElementById("firstName").value = userData.firstName;
                 document.getElementById("lastName").value = userData.lastName;
                 document.getElementById("email").value = userData.email;
@@ -61,15 +64,6 @@
                 // ... add other fields as needed
             };
 
-            // Fetch the current file to get its SHA
-            const response = await fetch(url, {
-                headers: {
-                    'Authorization': 'token ' + token
-                }
-            });
-            const data = await response.json();
-            const sha = data.sha;
-
             // Commit the updated content
             await fetch(url, {
                 method: 'PUT',
@@ -78,8 +72,8 @@
                 },
                 body: JSON.stringify({
                     message: 'Update data.json',
-                    content: btoa(unescape(encodeURIComponent(JSON.stringify(updatedData, null, 2)))), // Encode content to base64
-                    sha: sha
+                    content: btoa(JSON.stringify(updatedData, null, 2)), // Encode content to base64
+                    sha: currentSHA
                 })
             });
         }
