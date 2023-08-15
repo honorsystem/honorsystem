@@ -1,61 +1,97 @@
 {
-  "id": "12345",
-  "username": "JohnDoe",
-  "displayName": "John Doe",
-  "email": "johndoe@example.com",
-  "profileImage": "https://example.com/path/to/profile/image.jpg",
+  "@context": {
+    "@vocab": "https://example.com/terms/",
+    "schema": "http://schema.org/",
+    "id": "@id",
+    "type": "@type",
+    "Person": "schema:Person",
+    "Organization": "schema:Organization",
+    "Event": "schema:Event",
+    "Skill": "https://example.com/terms/Skill",
+    "Resource": "https://example.com/terms/Resource"
+  },
+  "id": "https://example.com/users/1",
+  "type": "Person",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "bio": "Hello, I'm John Doe!",
+  "location": "New York, USA",
+  "profilePicture": "https://example.com/profile.jpg",
   "skills": [
-    "Carpentry",
-    "Web Development"
+    {
+      "id": "https://example.com/skills/1",
+      "type": "Skill",
+      "name": "Web Development",
+      "description": "Ability to create and maintain websites and web applications.",
+      "endorsedBy": [
+        {
+          "id": "https://example.com/users/2",
+          "type": "Person",
+          "firstName": "Alice",
+          "lastName": "Smith"
+        }
+      ]
+    }
   ],
   "resources": [
-    "Woodworking Tools",
-    "Web Hosting"
+    {
+      "id": "https://example.com/resources/1",
+      "type": "Resource",
+      "name": "Laptop",
+      "description": "A high-end laptop suitable for programming and design.",
+      "ownedBy": "https://example.com/users/1"
+    }
+  ],
+  "memberOf": [
+    {
+      "id": "https://example.com/orgs/1",
+      "type": "Organization",
+      "name": "Web Developers United",
+      "description": "A community of passionate web developers.",
+      "members": [
+        "https://example.com/users/1",
+        "https://example.com/users/2"
+      ]
+    }
+  ],
+  "attending": [
+    {
+      "id": "https://example.com/events/1",
+      "type": "Event",
+      "name": "Web Dev Conference 2023",
+      "description": "A conference for web developers to learn and network.",
+      "startDate": "2023-09-01",
+      "endDate": "2023-09-03",
+      "location": "San Francisco, CA"
+    }
+  ],
+  "roles": [
+    {
+      "id": "https://example.com/roles/1",
+      "type": "Role",
+      "name": "Project Manager",
+      "description": "Oversees project development and ensures timely delivery."
+    }
   ],
   "badges": [
     {
-      "name": "Master Carpenter",
-      "description": "Recognized for advanced carpentry skills.",
-      "dateEarned": "2023-01-15"
-    },
-    {
-      "name": "Web Dev Pro",
-      "description": "Completed 50+ web development projects.",
-      "dateEarned": "2022-11-10"
+      "id": "https://example.com/badges/1",
+      "type": "Badge",
+      "name": "Top Contributor",
+      "description": "Awarded to the most active members of the community."
     }
   ],
   "projects": [
     {
-      "name": "Community Park Bench",
-      "role": "Carpenter",
-      "status": "Completed"
-    },
-    {
-      "name": "Local Business Website",
-      "role": "Web Developer",
-      "status": "In Progress"
+      "id": "https://example.com/projects/1",
+      "type": "Project",
+      "name": "Revolutionary Web App",
+      "description": "A web app that aims to change the way we use the internet.",
+      "members": [
+        "https://example.com/users/1",
+        "https://example.com/users/2"
+      ]
     }
-  ],
-  "events": [
-    {
-      "name": "Web Dev Workshop",
-      "date": "2023-02-20",
-      "role": "Attendee"
-    }
-  ],
-  "groups": [
-    "Green Builders",
-    "Web Dev Enthusiasts"
-  ],
-  "posts": [
-    {
-      "type": "Offer",
-      "content": "Offering a carpentry workshop next weekend. DM for details.",
-      "date": "2023-01-05"
-    }
-  ],
-  "tokens": {
-    "GreenCoin": 150,
-    "SkillToken": 230
-  }
+  ]
 }
