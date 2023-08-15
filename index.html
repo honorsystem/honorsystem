@@ -10,22 +10,33 @@
             padding: 20px;
             color: #333;
         }
-        top-container {
+
+        .top-container {
             width: 100%;
-            height: 200px; /* Adjust height as needed */
+            height: 250px; 
             background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover; /* This will ensure the background image covers the entire width of the container */
+            background-size: cover;
             display: flex;
-            justify-content: center; /* Center the profile image horizontally */
-            align-items: center; /* Center the profile image vertically */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
         img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            margin-bottom: 20px;
-            border: 5px solid #3498db;
+            border: 5px solid #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         textarea, input[type="text"] {
@@ -34,6 +45,7 @@
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         button {
@@ -43,6 +55,7 @@
             border-radius: 5px;
             color: #fff;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
@@ -64,7 +77,6 @@
     <p><strong>Owns:</strong> <input type="text" id="owns"></p>
     <p><strong>Knows About:</strong> <input type="text" id="knowsAbout"></p>
     <p><strong>Related To:</strong> <input type="text" id="relatedTo"></p>
-    <!-- Add more sections as needed -->
     <button onclick="saveChanges()">Save Changes</button>
 
     <script>
@@ -81,7 +93,6 @@
                 document.getElementById("owns").value = data.owns.name;
                 document.getElementById("knowsAbout").value = data.knowsAbout.join(', ');
                 document.getElementById("relatedTo").value = data.relatedTo.name;
-                // Continue in a similar fashion for other sections
             })
             .catch(error => console.error('Error fetching the JSON data:', error));
 
@@ -102,10 +113,8 @@
                 relatedTo: {
                     name: document.getElementById("relatedTo").value
                 }
-                // ... add other fields as needed
             };
 
-            // Here you can send the updatedData to your server or save it in some other way
             console.log(updatedData);
         }
     </script>
