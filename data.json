@@ -1,53 +1,12 @@
 {
-    "@context": "http://schema.org",
-    "@type": "Person",
-    "id": "http://magicalworld.com/user/luna",
-    "name": {
-        "firstName": "Luna",
-        "lastName": "Starshade"
-    },
-    "email": "luna.starshade@magicalworld.com",
-    "image": "http://magicalworld.com/profiles/luna.jpg",
-    "backgroundImage": "http://magicalworld.com/backgrounds/enchanted_forest.jpg",
-    "description": "A talented young witch from the Enchanted Forest. Luna loves stargazing, potion-making, and has a pet dragon named Ember.",
-    "location": {
-        "address": "1234 Enchanted Lane, Magicville, Enchanted Forest",
-        "favoritePlace": "Moonlit Clearing"
-    },
-    "skills": {
-        "itemListElement": ["Potion-making", "Spellcasting", "Broomstick flying"],
-        "specialSkill": "Moonlight Magic"
-    },
-    "memberOf": {
-        "name": "Witches' Council",
-        "description": "An elite group of witches and wizards that oversee magical affairs.",
-        "position": "Junior Council Member"
-    },
-    "adventures": {
-        "latestAdventure": "Quest for the Lost Star",
-        "upcomingAdventure": "Journey to the Mystic Mountains",
-        "sidekicks": {
-            "bestFriend": "Aria Moonwhisper",
-            "pet": {
-                "name": "Ember",
-                "type": "Dragon",
-                "favoriteSnack": "Crystal Berries"
-            }
-        }
-    },
-    "magicalItems": {
-        "wand": {
-            "material": "Moonwood",
-            "core": "Phoenix Feather",
-            "length": "12 inches"
-        },
-        "cloak": {
-            "color": "Midnight Blue",
-            "specialProperty": "Invisibility"
-        },
-        "book": {
-            "title": "Stars and Spells",
-            "author": "Celestia Starweaver"
-        }
-    }
+    "id": "luna",
+    "name": "Luna Starshine",
+    "type": "Human Mage",
+    "description": "Luna Starshine is a renowned mage known for her celestial magic. She's a seeker of knowledge and often embarks on quests to uncover ancient artifacts and secrets.",
+    "abilities": ["Starburst", "Celestial Sight", "Astral Projection"],
+    "icon": "https://example.com/luna-icon.png",
+    "image": "https://example.com/luna-image.jpg",
+    "backgroundImage": "https://example.com/celestial-tower.jpg",
+    "allies": ["aria_moonwhisper", "ember_dragon"],
+    "items": ["moonlit_wand"]
 }
