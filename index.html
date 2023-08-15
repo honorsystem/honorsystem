@@ -26,13 +26,21 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
         .expandable-container {
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
             overflow: hidden;
             transition: max-height 0.3s ease-in-out;
-            max-height: 40px;  /* Adjusted height */
+            max-height: 40px;
         }
 
         .expandable-container h2 {
@@ -56,13 +64,13 @@
         }
 
         button {
-            padding: 10px 20px;
+            padding: 5px 10px;
             background: #333;
             border: none;
             border-radius: 5px;
             color: white;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -81,33 +89,18 @@
         <h2 onclick="toggleExpand(this)">Name</h2>
         <div class="expandable-content">
             <input type="text" id="name">
-        </div>
-    </div>
-
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Email</h2>
-        <div class="expandable-content">
-            <input type="text" id="email">
-        </div>
-    </div>
-
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Description</h2>
-        <div class="expandable-content">
-            <textarea id="description" rows="4"></textarea>
+            <button onclick="saveField('name')">Save Changes</button>
         </div>
     </div>
 
     <!-- ... similar structure for other fields ... -->
-
-    <button onclick="saveChanges()">Save Changes</button>
 
     <script>
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "300px";  /* Adjusted height */
+                element.parentElement.style.maxHeight = "150px";  /* Adjusted height */
             } else {
                 content.style.display = "none";
                 element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
@@ -119,16 +112,16 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById("name").value = data.name;
-                document.getElementById("email").value = data.email;
-                document.getElementById("description").value = data.description;
                 // ... rest of the data binding ...
 
                 document.title = `${data.name}'s Profile`;
             })
             .catch(error => console.error('Error fetching the JSON data:', error));
 
-        function saveChanges() {
-            // ... save changes logic ...
+        function saveField(fieldId) {
+            const fieldValue = document.getElementById(fieldId).value;
+            console.log(`Saved ${fieldId}: ${fieldValue}`);
+            // Here you can send the updated data to your server or save it in some other way
         }
     </script>
 </body>
