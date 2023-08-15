@@ -10,7 +10,16 @@
             padding: 20px;
             color: #333;
         }
-
+        top-container {
+            width: 100%;
+            height: 200px; /* Adjust height as needed */
+            background: url('https://path-to-your-background-image.jpg') no-repeat center center;
+            background-size: cover; /* This will ensure the background image covers the entire width of the container */
+            display: flex;
+            justify-content: center; /* Center the profile image horizontally */
+            align-items: center; /* Center the profile image vertically */
+            margin-bottom: 20px;
+        }
         img {
             width: 150px;
             height: 150px;
@@ -42,6 +51,9 @@
     </style>
 </head>
 <body>
+    <div class="top-container">
+    <img id="profileImage" src="https://i.imgur.com/0SYKRVA.jpg" alt="Profile Image">
+    </div>
     <h1>User Profile</h1>
     <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     <p><strong>Name:</strong> <input type="text" id="name"></p>
