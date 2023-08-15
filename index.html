@@ -59,40 +59,46 @@
             background-color: #52c6da;
         }
 
-        .json-object {
-            margin-left: 20px;
+        .section-title {
+            color: #f92672;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>User Profile</h1>
-    <div class="json-object">
-        <div class="json-string">
-            <span class="json-key">"id"</span>: <span class="json-colon">:</span> <input type="url" id="id"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"firstName"</span>: <span class="json-colon">:</span> <input type="text" id="firstName"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"lastName"</span>: <span class="json-colon">:</span> <input type="text" id="lastName"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"email"</span>: <span class="json-colon">:</span> <input type="text" id="email"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"password"</span>: <span class="json-colon">:</span> <input type="password" id="password"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"bio"</span>: <span class="json-colon">:</span> <textarea id="bio" rows="4"></textarea><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"location"</span>: <span class="json-colon">:</span> <input type="text" id="location"><span class="json-comma">,</span>
-        </div>
-        <div class="json-string">
-            <span class="json-key">"profilePicture"</span>: <span class="json-colon">:</span> <input type="url" id="profilePicture"><span class="json-comma">,</span>
-        </div>
-        <!-- ... Continue in a similar fashion for other sections -->
+    <div class="json-string">
+        <span class="json-key">"profilePicture"</span>: <span class="json-colon">:</span> <img id="profilePicture" src="#" alt="Profile Image"><span class="json-comma">,</span>
     </div>
+    <div class="json-string">
+        <span class="json-key">"firstName"</span>: <span class="json-colon">:</span> <input type="text" id="firstName"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"lastName"</span>: <span class="json-colon">:</span> <input type="text" id="lastName"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"email"</span>: <span class="json-colon">:</span> <input type="text" id="email"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"password"</span>: <span class="json-colon">:</span> <input type="password" id="password"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"bio"</span>: <span class="json-colon">:</span> <textarea id="bio" rows="4"></textarea><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"location"</span>: <span class="json-colon">:</span> <input type="text" id="location"><span class="json-comma">,</span>
+    </div>
+
+    <h2 class="section-title">Skills</h2>
+    <div class="json-string">
+        <span class="json-key">"name"</span>: <span class="json-colon">:</span> <input type="text" id="skillName"><span class="json-comma">,</span>
+    </div>
+    <div class="json-string">
+        <span class="json-key">"description"</span>: <span class="json-colon">:</span> <textarea id="skillDescription" rows="4"></textarea><span class="json-comma">,</span>
+    </div>
+
+    <!-- ... Continue in a similar fashion for other sections like resources, organizations, events, etc. -->
+
     <button onclick="saveChanges()">Save Changes</button>
 
     <script>
@@ -100,26 +106,15 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                document.getElementById("id").value = data.id;
                 document.getElementById("firstName").value = data.firstName;
                 document.getElementById("lastName").value = data.lastName;
                 document.getElementById("email").value = data.email;
                 document.getElementById("password").value = data.password;
+                document.getElementById("profilePicture").src = data.profilePicture;
                 document.getElementById("bio").value = data.bio;
                 document.getElementById("location").value = data.location;
-                document.getElementById("profilePicture").value = data.profilePicture;
+                document.getElementById("skillName").value = data.skills[0].name;
+                document.getElementById("skillDescription").value = data.skills[0].description;
                 // Continue in a similar fashion for other sections
             })
-            .catch(error => console.error('Error fetching the JSON data:', error));
-
-        function saveChanges() {
-            const updatedData = {
-                id: document.getElementById("id").value,
-                firstName: document.getElementById("firstName").value,
-                lastName: document.getElementById("lastName").value,
-                email: document.getElementById("email").value,
-                password: document.getElementById("password").value,
-                bio: document.getElementById("bio").value,
-                location: document.getElementById("location").value,
-                profilePicture: document.getElementById("profilePicture").value,
-                // ... add other fields as needed
+            .catch(error => console.error('Error fetching the
