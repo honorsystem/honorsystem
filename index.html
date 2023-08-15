@@ -1,74 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ONE Local Foundation | Empowering Communities</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    .header {
-      background-color: #f2f2f2;
-      padding: 20px;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333;
-      font-size: 32px;
-      margin: 0;
-    }
-
-    .content {
-      padding: 20px;
-      text-align: center;
-    }
-
-    p {
-      color: #666;
-      font-size: 18px;
-      line-height: 1.5;
-    }
-
-    .cta-button {
-      background-color: #007bff;
-      color: #fff;
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 4px;
-      text-decoration: none;
-      font-size: 18px;
-      margin-top: 20px;
-    }
-
-    .cta-button:hover {
-      background-color: #0056b3;
-    }
-  </style>
+    <meta name="description" content="[Display and Edit User Data from JSON in HTML]">
+    <meta charset="utf-8">
+    <title>User Profile</title>
+    <style>
+        img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="header">
-    <h1>ONE Local Foundation</h1>
-  </div>
-  <div class="content">
-    <h2>About ONE Local Foundation</h2>
-    <p>ONE Local Foundation is a 501(c)(3) non-profit organization dedicated to empowering communities and improving access to resources for underserved individuals and families. We develop software solutions that address community needs and partner with organizations that share our mission.</p>
-    <p>Through collaborative development and deployment, we aim to create impactful and sustainable solutions. Our software is tailored to the specific challenges faced by communities, helping them streamline processes, enhance communication, and maximize their impact.</p>
-    <p>If your organization is aligned with our mission, we invite you to explore partnership opportunities and join us in making a difference.</p>
-    <a href="#contact" class="cta-button">Contact Us</a>
-  </div>
-  <div id="contact" class="content">
-    <h2>Contact Us</h2>
-    <p>If you have any questions or would like to discuss a potential partnership, please get in touch.</p>
-    <p>Email: admin@onelocal.org</p>
-    <p>Phone: (720) 645-6281</p>
-  </div>
-</body>
+    <h1>User Profile</h1>
+    <img id="profileImage" src="#" alt="Profile Image">
+    <p><strong>Username:</strong> <input type="text" id="username"></p>
+    <p><strong>Display Name:</strong> <input type="text" id="displayName"></p>
+    <p><strong>Email:</strong> <input type="text" id="email"></p>
+    <h2>Skills</h2>
+    <textarea id="skills" rows="4" cols="50"></textarea>
+    <h2>Resources</h2>
+    <textarea id="resources" rows="4" cols="50"></textarea>
+    <!-- Add more sections as needed -->
+    <button onclick="saveChanges()">Save Changes</button>
 
+    <script>
+        fetch('https://raw.githubusercontent.com/onelocaladmin/onelocalwebsite/main/data.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("username").value = data.username;
+                document.getElementById("displayName").value = data.displayName;
+                document.getElementById("email").value = data.email;
+                document.getElementById("profileImage").src = data.profileImage;
+                document.getElementById("skills").value = data.skills.join(', ');
+                document.getElementById("resources").value = data.resources.join(', ');
+
+                // Continue in a similar fashion for other sections
+            })
+            .catch(error => console.error('Error fetching the JSON data:', error));
+
+        function saveChanges() {
+            const updatedData = {
+                username: document.getElementById("username").value,
+                displayName: document.getElementById("displayName").value,
+                email: document.getElementById("email").value,
+                skills: document.getElementById("skills").value.split(', '),
+                resources: document.getElementById("resources").value.split(', '),
+                // ... add other fields as needed
+            };
+
+            // Here you can send the updatedData to your server or save it in some other way
+            console.log(updatedData);
+        }
+    </script>
+</body>
 </html>
