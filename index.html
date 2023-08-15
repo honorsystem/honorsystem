@@ -10,6 +10,8 @@
             background: #f4f4f4;
             padding: 20px;
             color: #333;
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .top-container {
@@ -41,6 +43,13 @@
             overflow: hidden;
             transition: max-height 0.3s ease-in-out;
             max-height: 40px;
+            width: 48%; /* Adjusted for columns */
+            margin-right: 2%;
+            box-sizing: border-box;
+        }
+
+        .expandable-container:nth-child(even) {
+            margin-right: 0;
         }
 
         .expandable-container h2 {
@@ -85,65 +94,17 @@
         <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
 
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Name</h2>
-        <div class="expandable-content">
-            <input type="text" id="firstName" placeholder="First Name">
-            <input type="text" id="lastName" placeholder="Last Name">
-            <button onclick="saveField('name')">Save Changes</button>
-        </div>
-    </div>
-    <div class="expandable-container">
-    <h2 onclick="toggleExpand(this)">Email</h2>
-    <div class="expandable-content">
-        <input type="text" id="email">
-        <button onclick="saveField('email')">Save Changes</button>
-        </div>
-    </div>
-    
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Description</h2>
-        <div class="expandable-content">
-            <textarea id="description" rows="4"></textarea>
-            <button onclick="saveField('description')">Save Changes</button>
-        </div>
-    </div>
-    
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Location</h2>
-        <div class="expandable-content">
-            <input type="text" id="location">
-            <button onclick="saveField('location')">Save Changes</button>
-        </div>
-    </div>
-    
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Skills</h2>
-        <div class="expandable-content">
-            <input type="text" id="skills">
-            <button onclick="saveField('skills')">Save Changes</button>
-        </div>
-    </div>
-    
-    <div class="expandable-container">
-        <h2 onclick="toggleExpand(this)">Member Of</h2>
-        <div class="expandable-content">
-            <input type="text" id="memberOfName" placeholder="Name">
-            <textarea id="memberOfDescription" rows="4" placeholder="Description"></textarea>
-            <button onclick="saveField('memberOf')">Save Changes</button>
-        </div>
-    </div>
-    <!-- ... similar structure for other fields ... -->
+    <!-- ... expandable containers ... -->
 
     <script>
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "200px";  /* Adjusted height */
+                element.parentElement.style.maxHeight = "200px";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
+                element.parentElement.style.maxHeight = "40px";
             }
         }
 
@@ -151,8 +112,6 @@
         fetch(url)
             .then(response => response.json())
             .then(data => {
-                document.getElementById("firstName").value = data.name.firstName;
-                document.getElementById("lastName").value = data.name.lastName;
                 document.getElementById("firstName").value = data.name.firstName;
                 document.getElementById("lastName").value = data.name.lastName;
                 document.getElementById("email").value = data.email;
