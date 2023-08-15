@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luna Starshade's Profile</title>
+    <title>Dynamic Profile</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -17,7 +18,7 @@
             flex-wrap: wrap;
             gap: 20px;
         }
-        
+
         .expandable-container {
             flex: 1;
             min-width: calc(33.33% - 10px);
@@ -44,7 +45,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        img {
+        img.profile-image {
             width: 150px;
             height: 150px;
             border-radius: 50%;
@@ -64,7 +65,8 @@
             display: none;
         }
 
-        textarea, input[type="text"] {
+        textarea,
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -85,14 +87,21 @@
         button:hover {
             background: #555;
         }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
     </style>
 </head>
+
 <body>
     <div class="top-container">
-        <h1>Luna Starshade's Profile</h1>
-        <img id="profileImage" src="http://magicalworld.com/profiles/luna.jpg" alt="Profile Image">
+        <h1 id="profileTitle"></h1>
+        <img class="profile-image" id="profileImage" alt="Profile Image">
     </div>
-    
+
     <div class="container" id="dynamicContainers">
         <!-- The expandable containers will be dynamically generated here -->
     </div>
@@ -102,24 +111,27 @@
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "300px";  /* Adjusted height */
+                element.parentElement.style.maxHeight = "300px";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
+                element.parentElement.style.maxHeight = "40px";
             }
         }
 
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
             console.log(`Saved ${fieldId}: ${fieldValue}`);
-            // Here you can send the updated data to your server or save it in some other way
         }
 
-        function createExpandableContainer(key, value) {
+        function createExpandableContainer(key, value, iconUrl) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
             const header = document.createElement('h2');
+            const icon = document.createElement('img');
+            icon.src = iconUrl;
+            icon.className = 'icon';
+            header.appendChild(icon);
             header.innerText = key;
             header.onclick = () => toggleExpand(header);
 
@@ -128,15 +140,25 @@
 
             if (typeof value === 'object' && !Array.isArray(value)) {
                 for (let subKey in value) {
-                    const subContainer = createExpandableContainer(subKey, value[subKey]);
+                    const subContainer = createExpandableContainer(subKey, value[subKey], value[subKey].icon || iconUrl);
                     content.appendChild(subContainer);
                 }
             } else if (Array.isArray(value)) {
+                const select = document.createElement('select');
+                value.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.innerText = item;
+                    select.appendChild(option);
+                });
+                content.appendChild(select);
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
-                input.value = value.join(', ');
                 content.appendChild(input);
+                select.addEventListener('change', (e) => {
+                    input.value = e.target.value;
+                });
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -156,14 +178,19 @@
             return container;
         }
 
-        const url = 'https://honorsystem.github.io/honorsystem/data.json';  // Replace with your actual JSON URL
+        const url = 'https://honorsystem.github.io/honorsystem/data.json';
         fetch(url)
             .then(response => response.json())
             .then(data => {
+                const profile = data.profile;
+                document.getElementById('profileTitle').innerText = profile.title;
+                document.getElementById('profileImage').src = profile.image;
+                document.body.style.backgroundImage = `url(${profile.backgroundImage})`;
+
                 const dynamicContainers = document.getElementById('dynamicContainers');
-                for (let key in data) {
-                    if (key !== "image" && key !== "backgroundImage") {  // We don't want to create containers for the images
-                        const container = createExpandableContainer(key, data[key]);
+                for (let key in profile) {
+                    if (key !== "icon" && key !== "title" && key !== "image" && key !== "backgroundImage") {
+                        const container = createExpandableContainer(key, profile[key], profile[key].icon || profile.icon);
                         dynamicContainers.appendChild(container);
                     }
                 }
@@ -171,4 +198,5 @@
             .catch(error => console.error('Error fetching the JSON data:', error));
     </script>
 </body>
+
 </html>
