@@ -93,7 +93,46 @@
             <button onclick="saveField('name')">Save Changes</button>
         </div>
     </div>
-
+    <div class="expandable-container">
+    <h2 onclick="toggleExpand(this)">Email</h2>
+    <div class="expandable-content">
+        <input type="text" id="email">
+        <button onclick="saveField('email')">Save Changes</button>
+        </div>
+    </div>
+    
+    <div class="expandable-container">
+        <h2 onclick="toggleExpand(this)">Description</h2>
+        <div class="expandable-content">
+            <textarea id="description" rows="4"></textarea>
+            <button onclick="saveField('description')">Save Changes</button>
+        </div>
+    </div>
+    
+    <div class="expandable-container">
+        <h2 onclick="toggleExpand(this)">Location</h2>
+        <div class="expandable-content">
+            <input type="text" id="location">
+            <button onclick="saveField('location')">Save Changes</button>
+        </div>
+    </div>
+    
+    <div class="expandable-container">
+        <h2 onclick="toggleExpand(this)">Skills</h2>
+        <div class="expandable-content">
+            <input type="text" id="skills">
+            <button onclick="saveField('skills')">Save Changes</button>
+        </div>
+    </div>
+    
+    <div class="expandable-container">
+        <h2 onclick="toggleExpand(this)">Member Of</h2>
+        <div class="expandable-content">
+            <input type="text" id="memberOfName" placeholder="Name">
+            <textarea id="memberOfDescription" rows="4" placeholder="Description"></textarea>
+            <button onclick="saveField('memberOf')">Save Changes</button>
+        </div>
+    </div>
     <!-- ... similar structure for other fields ... -->
 
     <script>
@@ -114,6 +153,15 @@
             .then(data => {
                 document.getElementById("firstName").value = data.name.firstName;
                 document.getElementById("lastName").value = data.name.lastName;
+                document.getElementById("firstName").value = data.name.firstName;
+                document.getElementById("lastName").value = data.name.lastName;
+                document.getElementById("email").value = data.email;
+                document.getElementById("description").value = data.description;
+                document.getElementById("location").value = data.location.address;
+                document.getElementById("skills").value = data.skills.itemListElement.join(', ');
+                document.getElementById("memberOfName").value = data.memberOf.name;
+                document.getElementById("memberOfDescription").value = data.memberOf.description;
+
                 // ... rest of the data binding ...
 
                 document.title = `${data.name.firstName} ${data.name.lastName}'s Profile`;
