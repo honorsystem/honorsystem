@@ -117,4 +117,26 @@
                 document.getElementById("skillDescription").value = data.skills[0].description;
                 // Continue in a similar fashion for other sections
             })
-            .catch(error => console.error('Error fetching the
+            .catch(error => console.error('Error fetching the JSON data:', error));
+
+        function saveChanges() {
+            const updatedData = {
+                firstName: document.getElementById("firstName").value,
+                lastName: document.getElementById("lastName").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                bio: document.getElementById("bio").value,
+                location: document.getElementById("location").value,
+                skills: [{
+                    name: document.getElementById("skillName").value,
+                    description: document.getElementById("skillDescription").value
+                }]
+                // ... add other fields as needed
+            };
+
+            // Here you can send the updatedData to your server or save it in some other way
+            console.log(updatedData);
+        }
+    </script>
+</body>
+</html>
