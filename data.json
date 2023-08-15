@@ -1,0 +1,61 @@
+{
+  "id": "12345",
+  "username": "JohnDoe",
+  "displayName": "John Doe",
+  "email": "johndoe@example.com",
+  "profileImage": "https://example.com/path/to/profile/image.jpg",
+  "skills": [
+    "Carpentry",
+    "Web Development"
+  ],
+  "resources": [
+    "Woodworking Tools",
+    "Web Hosting"
+  ],
+  "badges": [
+    {
+      "name": "Master Carpenter",
+      "description": "Recognized for advanced carpentry skills.",
+      "dateEarned": "2023-01-15"
+    },
+    {
+      "name": "Web Dev Pro",
+      "description": "Completed 50+ web development projects.",
+      "dateEarned": "2022-11-10"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Community Park Bench",
+      "role": "Carpenter",
+      "status": "Completed"
+    },
+    {
+      "name": "Local Business Website",
+      "role": "Web Developer",
+      "status": "In Progress"
+    }
+  ],
+  "events": [
+    {
+      "name": "Web Dev Workshop",
+      "date": "2023-02-20",
+      "role": "Attendee"
+    }
+  ],
+  "groups": [
+    "Green Builders",
+    "Web Dev Enthusiasts"
+  ],
+  "posts": [
+    {
+      "type": "Offer",
+      "content": "Offering a carpentry workshop next weekend. DM for details.",
+      "date": "2023-01-05"
+    }
+  ],
+  "tokens": {
+    "GreenCoin": 150,
+    "SkillToken": 230
+  }
+}
