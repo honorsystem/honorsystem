@@ -1,125 +1,232 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>People Page</title>
-<div data-<%=template%>="<%=_tid%>" <%if(inline){%>class="sfit"<%}else{%>style="position:absolute;top:0;height:100%;left:<%=left%>%;width:100%;overflow:hidden"<%}%>>
-	<div class="subpagewrapper" style="position: absolute;top:0;left:0;width:100%;height:100%">
-		<div style="position: absolute;top:0;left:0;width:100%;height:100%" class="connectionspage pagebg">
-			<div style="position: absolute;top:0;left:0;right:0;height:50px;display:none" class="headercolor topnavheader feeditems">
-				<table style="width:100%;height:100%">
-					<tr>
-						<td class="topnav" data-nav="home">
-							<div style="padding-top:3px" class="topicon">
-								<i class="icon-home" style="font-size:26px"></i>
-							</div>
-							<div style="font-size:11px;padding-top:2px" class="helptext">Home</div>
-						</td>
-						<td class="topnav" data-nav="browse">
-							<div style="padding-top:3px" class="topicon">
-								<i class="icon-browse_new" style="font-size:26px"></i>
-							</div>
-							<div style="font-size:11px;padding-top:2px" class="helptext">Browse</div>
-						</td>				
-						<td class="topnav" data-nav="myposts">
-							<div style="padding-top:3px" class="topicon">
-								<i class="icon-user-outline" style="font-size:26px"></i>
-							</div>
-							<div style="font-size:11px;padding-top:2px" class="helptext">My Posts</div>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div style="position: absolute;top:0px;left:0;right:0;bottom:0;overflow: hidden;" class="topnavcontent"><!-- topnavcontent -->
-				<div style="display: none;" class="pages sfit" data-page="find">
-					<div class="sfit scrollcontainer" style="z-index:1">
-						<div class="sfit scroller" style="z-index:1">
-							<div class="content feeditems "></div>
-						</div>
-					</div>
-					<div class="websidepane" style="z-index: 2"></div>
-				</div>
-				<div style="display: none;" class="pages sfit" data-page="browse">
-				</div>
-				<div style="display: none;" class="pages sfit" data-page="activity">
-					<div class="sfit" style="z-index:1;">
-						<div class="activity"></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-@@@people_page_page@@@
-<div data-<%=template%>="<%=_tid%>" style="position:absolute;top:0;height:100%;left:<%=left%>%;width:100%;overflow:hidden">
-	<%=$.fn.render({template:'app_header',data:{
-		data:{
-			name:name,
-			back:'<i class="icon-left-open"></i>',
-			submit:' '
-		}
-	},returntemplate:true})%>
-	<div style="position: absolute;top:65px;left:0;right:0;bottom:0;overflow: hidden;background:#eee" class=""><!-- topnavcontent -->
-		<div style="display: none;" class="pages sfit" data-page="find">
-			<div class="mobileheaderbar"></div>
-			<div class="sfit appcontentbg mobilepagecontent" style="z-index:1">
-				<div class="content sfit"></div>
-			</div>
-			<div class="websidepane"></div>
-		</div>
-	</div>
-</div>
-@@@people_find_user@@@
-<div data-<%=template%>="<%=_tid%>" class="rowitem" data-id="<%=data.id%>" style="background: white;border-bottom:1px solid #ddd;border-top:1px solid #ddd;margin-bottom:8px;">
-	<table style="width:100%">
-		<tr>
-			<td style="text-align: left" class="prettywidth">
-				<div style="background-image:url(<%=modules.tools.getImg(data.pic,'small')%>)" class="coverimg prettypic"></div>
-				<div class="highlightbutton2" style="font-size:13px;padding:4px;color:white"><%if(data.name){%><%=data.name.firstName()%><%}%></div>
-			</td>
-			<td style="padding-left:5px;vertical-align: top;padding-top:5px">
-				<%if(data.callout){%>
-				<div class="highlighttext2" style="padding-bottom:10px;font-size:14px"><%=data.callout.callout.limitlength(100)%></div>
-				<%}%>
-				<%if(data.birthday_ts||data.gender||data.rs){%>
-				<table style="width:100%;font-size:15px">
-					<tr>
-						<td style="width:30px;text-align: center;">
-							<i class="icon-user-outline" style="font-size:18px"></i>
-						</td>
-						<td>
-							<div><%if(data.birthday_ts){%><%=modules.moment.getAge(data.birthday_ts,1)%>, <%}%><%if(data.gender){%><%=app.loc(data.gender.gender)%> <%}%><%if(data.rs){%><%=data.rs%><%}%></div>
-						</td>
-					</tr>
-				</table>
-				<%}%>
-				<%if(data.location_info){%>
-				<table style="width:100%;font-size:15px;margin-top:8px">
-					<tr>
-						<td style="width:30px;text-align: center;">
-							<i class="icon-home" style="font-size:18px"></i>
-						</td>
-						<td>
-							<div><%=app.location.getName(data.location_info,'city')%> <%=app.getDistance(data.dist.calculated,1)%></div>
-						</td>
-					</tr>
-				</table>
-				<%}%>
-				<%if(data.mutual){%>
-				<table style="width:100%;font-size:15px;margin-top:8px">
-					<tr>
-						<td style="width:30px;text-align: center;">
-							<i class="icon-friends-nectar" style="font-size:18px"></i>
-						</td>
-						<td>
-							<div><%=data.mutual%> Mutual Friends</div>
-						</td>
-					</tr>
-				</table>
-				<%}%>
-			</td>
-		</tr>
-	</table>
-</div>
+    <title>Luna's Profile</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        
+        .expandable-container {
+            flex: 0 1 calc(33.33% - 20px); /* This will make each container take up roughly a third of the container's width, minus the gap */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+
+        .top-container {
+            width: 100%;
+            height: 250px;
+            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .expandable-container h2 {
+            margin: 0;
+            padding: 10px;
+            background: #e7e7e7;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .expandable-container h2 img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .expandable-content {
+            padding: 10px;
+            display: none;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background: #333;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-container">
+        <h1 id="profileName">Luna's Profile</h1>
+        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
+    </div>
+
+    <div class="container" id="dynamicContainers">
+        <!-- The expandable containers will be dynamically generated here -->
+    </div>
+
+
+    <script>
+        function toggleExpand(element) {
+            const content = element.nextElementSibling;
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+                element.parentElement.style.maxHeight = "500px";
+            } else {
+                content.style.display = "none";
+                element.parentElement.style.maxHeight = "40px";
+            }
+        }
+
+        function saveField(fieldId) {
+            const fieldValue = document.getElementById(fieldId).value;
+            console.log(`Saved ${fieldId}: ${fieldValue}`);
+        }
+
+        function addToFieldFromDropdown(dropdown, fieldId) {
+            const fieldValue = document.getElementById(fieldId).value;
+            const selectedValue = dropdown.value;
+            if (fieldValue) {
+                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
+            } else {
+                document.getElementById(fieldId).value = selectedValue;
+            }
+        }
+
+        function createExpandableContainer(key, value, iconUrl) {
+            const container = document.createElement('div');
+            container.className = 'expandable-container';
+
+            const header = document.createElement('h2');
+            const icon = document.createElement('img');
+            icon.src = iconUrl;
+            header.appendChild(icon);
+            header.appendChild(document.createTextNode(key));
+            header.onclick = () => toggleExpand(header);
+
+            const content = document.createElement('div');
+            content.className = 'expandable-content';
+
+            if (Array.isArray(value)) {
+                const dropdown = document.createElement('select');
+                value.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.innerText = item;
+                    dropdown.appendChild(option);
+                });
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
+                content.appendChild(input);
+            } else {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                input.value = value;
+                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
+                content.appendChild(input);
+            }
+
+            const saveButton = document.createElement('button');
+            saveButton.innerText = 'Save Changes';
+            saveButton.onclick = () => saveField(key);
+            content.appendChild(saveButton);
+
+            container.appendChild(header);
+            container.appendChild(content);
+
+            return container;
+        }
+
+        function handleDoubleClick(event) {
+            const clickedValue = event.target.value;
+            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('dynamicContainers').innerHTML = '';  // Clear existing containers
+                    for (let key in data) {
+                        if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
+                            const container = createExpandableContainer(key, data[key], data.icon);
+                            dynamicContainers.appendChild(container);
+                        }
+                    }
+                    document.getElementById('profileName').innerText = data.name;
+                    document.getElementById('profileImage').src = data.image;
+                    document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+                })
+                .catch(error => console.error('Error fetching the JSON data:', error));
+        }
+
+        const lunaData = {
+            "id": "luna",
+            "name": "Luna Starshine",
+            "type": "Human Mage",
+            "description": "Luna Starshine is a renowned mage known for her celestial magic. She's a seeker of knowledge and often embarks on quests to uncover ancient artifacts and secrets.",
+            "abilities": ["Starburst", "Celestial Sight", "Astral Projection"],
+            "icon": "https://i.imgur.com/YTFyCYO.jpg",
+            "image": "https://i.imgur.com/YTFyCYO.jpg",
+            "backgroundImage": "https://i.imgur.com/0SYKRVA.jpg",
+            "allies": ["aria_moonwhisper", "ember_dragon"],
+            "items": ["moonlit_wand"]
+        };
+
+        document.getElementById('profileName').innerText = lunaData.name;
+        document.getElementById('profileImage').src = lunaData.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${lunaData.backgroundImage})`;
+
+        const dynamicContainers = document.getElementById('dynamicContainers');
+        for (let key in lunaData) {
+            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
+                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
+                dynamicContainers.appendChild(container);
+            }
+        }
+    </script>
+</body>
+
 </html>
