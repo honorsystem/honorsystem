@@ -13,21 +13,26 @@
             color: #333;
         }
 
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: space-between;
-        }
-        
-        .expandable-container {
-            flex: 0 1 calc(33.33% - 20px); /* This will make each container take up roughly a third of the container's width, minus the gap */
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow-y: auto;
-            max-height: 300px;
-        }
+.container {
+    display: flex;
+    flex-direction: column; /* Change from row to column */
+    gap: 20px;
+}
+
+.expandable-container {
+    width: 100%; /* Ensure it takes the full width */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease-in-out; /* Smooth transition for expanding and collapsing */
+    max-height: 40px; /* Initial max-height */
+}
+
+.expandable-container.expanded {
+    max-height: 500px; /* Expanded max-height */
+}
+
 
         .top-container {
             width: 100%;
@@ -107,16 +112,20 @@
 
 
     <script>
+
         function toggleExpand(element) {
             const content = element.nextElementSibling;
+            const container = element.parentElement;
+        
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px";
+                container.classList.add('expanded'); // Add the expanded class
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
+                container.classList.remove('expanded'); // Remove the expanded class
             }
         }
+        
     
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
