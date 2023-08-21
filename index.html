@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User's Profile</title>
+    <title>Luna's Profile</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -97,8 +97,8 @@
 
 <body>
     <div class="top-container">
-        <h1 id="profileName">(data.json[name]) 's Profile</h1>
-        <img id="profileImage" src="data.json[image]" alt="Profile Image">
+        <h1 id="profileName">Loading...</h1>
+        <img id="profileImage" src="#" alt="Profile Image">
     </div>
 
     <div class="container" id="dynamicContainers">
@@ -210,7 +210,7 @@
         }
 
         function populateProfile(data) {
-            document.getElementById('profileName').innerText = data.name;
+            document.getElementById('profileName').innerText = `${data.name}'s Profile`;
             document.getElementById('profileImage').src = data.image;
             document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
         }
