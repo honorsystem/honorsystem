@@ -22,6 +22,12 @@
             flex: 1;
             min-width: calc(33.33% - 10px);
             max-width: calc(33.33% - 10px);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            max-height: 40px;
         }
 
         .top-container {
@@ -44,15 +50,6 @@
             border-radius: 50%;
             border: 5px solid white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .expandable-container {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-            max-height: 40px;
         }
 
         .expandable-container h2 {
@@ -88,24 +85,8 @@
         button:hover {
             background: #555;
         }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* This provides spacing between the columns */
-        }
-        
-        .expandable-container {
-            flex: 1; /* This allows the containers to grow and take up available space */
-            min-width: calc(50% - 10px); /* This ensures that at least 2 containers fit in a row, considering the gap */
-            max-width: calc(50% - 10px); /* This ensures that at least 2 containers fit in a row, considering the gap */
-        }
-
-        
     </style>
 </head>
-<body>
-
 <body>
     <div class="top-container">
         <h1>User Profile</h1>
@@ -116,11 +97,8 @@
         <!-- The expandable containers will be dynamically generated here -->
     </div>
 
-        
-
     <script>
-
-      function toggleExpand(element) {
+        function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
@@ -194,319 +172,6 @@
                 document.title = `${data.name.firstName} ${data.name.lastName}'s Profile`;
             })
             .catch(error => console.error('Error fetching the JSON data:', error));
-
-        
-        function toggleExpand(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
-                element.parentElement.style.maxHeight = "200px";  /* Adjusted height */
-            } else {
-                content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
-            }
-        }
-
-
-
-        function saveField(fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
-            // Here you can send the updated data to your server or save it in some other way
-        }
-
-
-                function toggleExpand(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
-                element.parentElement.style.maxHeight = "200px";
-            } else {
-                content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
-            }
-        }
-
-        function saveField(fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
-            // Here you can send the updated data to your server or save it in some other way
-        }
-
-        function createFieldContainer(key, value) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
-
-            const header = document.createElement('h2');
-            header.innerText = key;
-            header.onclick = () => toggleExpand(header);
-
-            const content = document.createElement('div');
-            content.className = 'expandable-content';
-
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                for (let subKey in value) {
-                    const subContainer = createFieldContainer(subKey, value[subKey]);
-                    content.appendChild(subContainer);
-                }
-            } else if (Array.isArray(value)) {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value.join(', ');
-                content.appendChild(input);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
-            content.appendChild(saveButton);
-
-            container.appendChild(header);
-            container.appendChild(content);
-
-            return container;
-        }
-
-        const url = 'https://honorsystem.github.io/honorsystem/data.json';
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const dynamicContainers = document.getElementById('dynamicContainers');
-                for (let key in data) {
-                    const container = createFieldContainer(key, data[key]);
-                    dynamicContainers.appendChild(container);
-                }
-
-                document.title = `${data.name.firstName} ${data.name.lastName}'s Profile`;
-            })
-            .catch(error => console.error('Error fetching the JSON data:', error));
-
-        
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        
-        .expandable-container {
-            flex: 1;
-            min-width: calc(33.33% - 10px);
-            max-width: calc(33.33% - 10px);
-        }
-
-        .top-container {
-            width: 100%;
-            height: 250px;
-            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .expandable-container {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: max-height 0.3s ease-in-out;
-            max-height: 40px;
-        }
-
-        .expandable-container h2 {
-            margin: 0;
-            padding: 10px;
-            cursor: pointer;
-            background: #e7e7e7;
-        }
-
-        .expandable-content {
-            padding: 10px;
-            display: none;
-        }
-
-        textarea, input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #333;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #555;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* This provides spacing between the columns */
-        }
-        
-        .expandable-container {
-            flex: 1; /* This allows the containers to grow and take up available space */
-            min-width: calc(50% - 10px); /* This ensures that at least 2 containers fit in a row, considering the gap */
-            max-width: calc(50% - 10px); /* This ensures that at least 2 containers fit in a row, considering the gap */
-        }
-
-        
-    </style>
-</head>
-<body>
-
-<body>
-    <div class="top-container">
-        <h1>User Profile</h1>
-        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
-    </div>
-    
-    <div class="container" id="dynamicContainers">
-        <!-- The expandable containers will be dynamically generated here -->
-    </div>
-
-        
-
-    <script>
-
-      function toggleExpand(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
-                element.parentElement.style.maxHeight = "200px";
-            } else {
-                content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
-            }
-        }
-
-        function saveField(fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
-            // Here you can send the updated data to your server or save it in some other way
-        }
-
-        function createExpandableContainer(key, value) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
-
-            const header = document.createElement('h2');
-            header.innerText = key;
-            header.onclick = () => toggleExpand(header);
-
-            const content = document.createElement('div');
-            content.className = 'expandable-content';
-
-            if (typeof value === 'object' && !Array.isArray(value)) {
-                for (let subKey in value) {
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = `${key}_${subKey}`;
-                    input.value = value[subKey];
-                    content.appendChild(input);
-                }
-            } else if (Array.isArray(value)) {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value.join(', ');
-                content.appendChild(input);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
-            content.appendChild(saveButton);
-
-            container.appendChild(header);
-            container.appendChild(content);
-
-            return container;
-        }
-
-        const url = 'https://honorsystem.github.io/honorsystem/data.json';
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const dynamicContainers = document.getElementById('dynamicContainers');
-                for (let key in data) {
-                    const container = createExpandableContainer(key, data[key]);
-                    dynamicContainers.appendChild(container);
-                }
-
-                document.title = `${data.name.firstName} ${data.name.lastName}'s Profile`;
-            })
-            .catch(error => console.error('Error fetching the JSON data:', error));
-
-        
-        function toggleExpand(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
-                element.parentElement.style.maxHeight = "200px";  /* Adjusted height */
-            } else {
-                content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
-            }
-        }
-
-
-
-        function saveField(fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
-            // Here you can send the updated data to your server or save it in some other way
-        }
     </script>
 </body>
 </html>
