@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Profile</title>
+    <title>Luna Starshade's Profile</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -20,30 +20,43 @@
         
         .expandable-container {
             flex: 1;
-            min-width: calc(90% - 10px);
-            max-width: calc(90% - 10px);
-            overflow-y: auto;
-            max-height: 300px;
+            min-width: calc(33.33% - 10px);
+            max-width: calc(33.33% - 10px);
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
+            overflow: hidden;
             transition: max-height 0.3s ease-in-out;
             max-height: 40px;
-            cursor: pointer;
+        }
+
+        .top-container {
+            width: 100%;
+            height: 250px;
+            background: url('http://magicalworld.com/backgrounds/enchanted_forest.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .expandable-container h2 {
             margin: 0;
             padding: 10px;
+            cursor: pointer;
             background: #e7e7e7;
-            display: flex;
-            align-items: center;
-        }
-
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
         }
 
         .expandable-content {
@@ -51,7 +64,7 @@
             display: none;
         }
 
-        textarea, input[type="text"], select {
+        textarea, input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -75,6 +88,11 @@
     </style>
 </head>
 <body>
+    <div class="top-container">
+        <h1>Luna Starshade's Profile</h1>
+        <img id="profileImage" src="http://magicalworld.com/profiles/luna.jpg" alt="Profile Image">
+    </div>
+    
     <div class="container" id="dynamicContainers">
         <!-- The expandable containers will be dynamically generated here -->
     </div>
@@ -84,38 +102,25 @@
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "300px";
+                element.parentElement.style.maxHeight = "300px";  /* Adjusted height */
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
+                element.parentElement.style.maxHeight = "40px";  /* Adjusted height */
             }
         }
 
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
             console.log(`Saved ${fieldId}: ${fieldValue}`);
+            // Here you can send the updated data to your server or save it in some other way
         }
 
-        function addToFieldFromDropdown(dropdown, fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            const selectedValue = dropdown.value;
-            if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
-            } else {
-                document.getElementById(fieldId).value = selectedValue;
-            }
-        }
-
-        function createExpandableContainer(key, value, iconUrl) {
+        function createExpandableContainer(key, value) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
             const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            icon.className = 'icon';
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
+            header.innerText = key;
             header.onclick = () => toggleExpand(header);
 
             const content = document.createElement('div');
@@ -123,33 +128,14 @@
 
             if (typeof value === 'object' && !Array.isArray(value)) {
                 for (let subKey in value) {
-                    if (typeof value[subKey] === 'object') {
-                        // Fetch the JSON of the sub-object from the filesystem
-                        fetch(`${key}/${subKey}.json`)
-                            .then(response => response.json())
-                            .then(subData => {
-                                const subContainer = createExpandableContainer(subKey, subData, subData.icon);
-                                content.appendChild(subContainer);
-                            });
-                    } else {
-                        const subContainer = createExpandableContainer(subKey, value[subKey], value.icon);
-                        content.appendChild(subContainer);
-                    }
+                    const subContainer = createExpandableContainer(subKey, value[subKey]);
+                    content.appendChild(subContainer);
                 }
             } else if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
-                    dropdown.appendChild(option);
-                });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
-                content.appendChild(dropdown);
-
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
+                input.value = value.join(', ');
                 content.appendChild(input);
             } else {
                 const input = document.createElement('input');
@@ -177,7 +163,7 @@
                 const dynamicContainers = document.getElementById('dynamicContainers');
                 for (let key in data) {
                     if (key !== "image" && key !== "backgroundImage") {  // We don't want to create containers for the images
-                        const container = createExpandableContainer(key, data[key], data.icon);
+                        const container = createExpandableContainer(key, data[key]);
                         dynamicContainers.appendChild(container);
                     }
                 }
