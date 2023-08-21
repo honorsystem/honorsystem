@@ -137,7 +137,20 @@
                     }
                 }
             } else if (Array.isArray(value)) {
-                /* ... [this part remains unchanged] ... */
+                const dropdown = document.createElement('select');
+                value.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.innerText = item;
+                    dropdown.appendChild(option);
+                });
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                content.appendChild(input);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
