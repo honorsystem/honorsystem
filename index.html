@@ -97,8 +97,8 @@
 
 <body>
     <div class="top-container">
-        <h1 id="profileName">Loading...</h1>
-        <img id="profileImage" src="#" alt="Profile Image">
+        <h1 id="profileName">Luna's Profile</h1>
+        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
 
     <div class="container" id="dynamicContainers">
@@ -183,13 +183,6 @@
             return container;
         }
 
-        const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in data.json) {
-            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
-                dynamicContainers.appendChild(container);
-            }
-
         function handleDoubleClick(event) {
             const clickedValue = event.target.value;
             fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
@@ -209,42 +202,170 @@
                 .catch(error => console.error('Error fetching the JSON data:', error));
         }
 
-        function populateProfile(data) {
-            document.getElementById('profileName').innerText = `${data.name}'s Profile`;
-            document.getElementById('profileImage').src = data.image;
-            document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
-        }
+        const Data = {
+{
+  "_ID": "123456",
+  "type": "User",
+  "id": "U12345",
+  "name": "John Doe",
+  "type": "User",
+  "description": "A passionate event organizer and resource sharer.",
+  "icon": "icon_url_1.jpg",
+  "image": "image_url_1.jpg",
+  "backgroundImage": "bg_image_url_1.jpg",
+  "allies": ["U12346", "U12347"],
+  "items": ["Item1", "Item2"],
+  "createdAt": "2022-01-01",
+  "updatedAt": "2022-01-02",
+  "userType": "Regular",
+  "trueUser": {
+    "firstName": "John",
+    "lastName": "Doe",
+    "address": "123 Main St, City, Country",
+    "liveLocation": "City Central Park",
+    "checkinLocation": "City Cafe",
+    "email": "johndoe@email.com",
+    "password": "securepassword",
+    "profilePicture": "profile_pic_url_1.jpg",
+    "alternateIdentities": ["Character1", "Organization1"],
+    "bio": "I love organizing events and sharing resources.",
+    "location": "City, Country",
+    "myEvents": ["E12345", "E12346"],
+    "maybeEvents": ["E12347"],
+    "invites": {
+      "invitedBy": ["U12346"],
+      "event": ["E12348"]
+    },
+    "skills": ["Skill1", "Skill2"],
+    "resources": {
+      "owned": {
+        "forRent": true,
+        "rentBooking": ["2022-01-10 to 2022-01-15"],
+        "rentedOut": true,
+        "renter": ["U12347"]
+      },
+      "rented": ["Resource1"],
+      "borrowing": ["Resource2"]
+    }
+  },
+  "projects": {
+    "title": "Project Alpha",
+    "description": "A project to organize a community event.",
+    "members": ["U12345", "U12346"],
+    "tasks": ["T12345", "T12346"],
+    "milestones": ["Milestone1", "Milestone2"],
+    "status": "In Progress"
+  },
+  "org": {
+    "name": "Org Alpha",
+    "description": "An organization for community events.",
+    "members": ["U12345", "U12346", "U12347"],
+    "roles": ["Role1", "Role2"],
+    "projects": ["P12345", "P12346"]
+  },
+  "task": {
+    "title": "Task Alpha",
+    "description": "A task to prepare for the event.",
+    "assignee": "U12345",
+    "status": "Completed",
+    "dueDate": "2022-01-10",
+    "subTasks": ["SubTask1", "SubTask2"]
+  },
+  "role": {
+    "name": "Organizer",
+    "description": "Responsible for organizing events.",
+    "permissions": ["Create Event", "Edit Event"]
+  },
+  "badge": {
+    "name": "Top Organizer",
+    "description": "Awarded to the best event organizers.",
+    "criteria": "Organize 5 successful events."
+  },
+  "group": {
+    "name": "Event Organizers",
+    "description": "A group for event organizers.",
+    "members": ["U12345", "U12346"],
+    "posts": ["Post1", "Post2"]
+  },
+  "product": {
+    "name": "Product Alpha",
+    "description": "A product for event organizers.",
+    "price": "$100",
+    "availability": "In Stock",
+    "reviews": ["Review1", "Review2"]
+  },
+  "service": {
+    "name": "Service Alpha",
+    "description": "A service for event organizers.",
+    "price": "$50/hour",
+    "availability": "Available",
+    "reviews": ["Review3", "Review4"]
+  },
+  "offer": {
+    "name": "Offer Alpha",
+    "description": "A special offer for early bird tickets.",
+    "price": "$80",
+    "availability": "Limited"
+  },
+  "request": {
+    "name": "Request Alpha",
+    "description": "A request for volunteers for the event.",
+    "neededBy": "2022-01-05"
+  },
+  "gratis": {
+    "points": 100,
+    "givenBy": ["U12346"],
+    "receivedBy": ["U12347", "U12348"]
+  },
+  "post": {
+    "title": "Post Alpha",
+    "content": "Excited for the upcoming event!",
+    "likes": ["U12346", "U12347"],
+    "comments": ["Comment1", "Comment2"]
+  },
+  "comment": {
+    "content": "Me too!",
+    "author": "U12346",
+    "likes": ["U12345"]
+  },
+  "interest": {
+    "name": "Event Organizing",
+    "description": "Interested in organizing and attending events."
+  },
+  "purchase": {
+    "product": "Product Alpha",
+    "buyer": "U12345",
+    "date": "2022-01-03",
+    "amount": "$100"
+  },
+  "token": {
+    "value": 50,
+    "type": "In-game credit",
+    "expiryDate": "2023-01-01"
+  },
+  "gift": {
+    "name": "Gift Alpha",
+    "description": "A gift for the best event organizer.",
+    "sender": "U12346",
+    "receiver": "U12345",
+    "date": "2022-01-01"
+  }
+}
 
-        function populateDynamicContainers(data) {
-            const dynamicContainers = document.getElementById('dynamicContainers');
-            for (let key in data) {
-                if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                    const container = createExpandableContainer(key, data[key], data.icon);
-                    dynamicContainers.appendChild(container);
-                }
+        };
+
+        document.getElementById('profileName').innerText = Data.name;
+        document.getElementById('profileImage').src = Data.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${Data.backgroundImage})`;
+
+        const dynamicContainers = document.getElementById('dynamicContainers');
+        for (let key in Data) {
+            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
+                const container = createExpandableContainer(key, Data[key], Data.icon);
+                dynamicContainers.appendChild(container);
             }
-        }
-
-        // Fetch data from data.json
-        function fetchData() {
-            fetch('data.json')
-                .then(response => response.json())
-                .then(data => {
-                    populateProfile(data);
-                    populateDynamicContainers(data);
-                })
-                .catch(error => console.error('Error fetching the JSON data:', error));
-        }
-
-        // Call the function to fetch data from data.json
-        fetchData();
-
-
-
         }
     </script>
 </body>
 
 </html>
-
-
