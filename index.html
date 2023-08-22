@@ -1,254 +1,79 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+    <meta name="description" content="[Display and Edit User Data from JSON in HTML]">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luna's Profile</title>
+    <title>User Profile</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: space-between;
-            align-items: flex-start;  /* Added this line */
-        }
-        
-        .expandable-container {
-            flex: 0 1 calc(33.33% - 20px); /* This will make each container take up roughly a third of the container's width, minus the gap */
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow-y: auto;
-            max-height: 300px;
-        }
-
-        .top-container {
-            width: 100%;
-            height: 250px;
-            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
         img {
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .expandable-container h2 {
-            margin: 0;
-            padding: 10px;
-            background: #e7e7e7;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .expandable-content {
-            padding: 10px;
-            display: none;
-        }
-
-        select, input[type="text"] {
-            width: 90%;  /* Adjusted from 100% to 90% */
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;  /* Added to ensure padding and border are included in the total width */
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #333;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #555;
         }
     </style>
 </head>
-
 <body>
-    <div class="top-container">
-        <h1 id="profileName">Luna's Profile</h1>
-        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
-    </div>
-
-    <div class="container" id="dynamicContainers">
-        <!-- The expandable containers will be dynamically generated here -->
-    </div>
-
+    <h1>User Profile</h1>
+    <img id="profileImage" src="#" alt="Profile Image">
+    <p><strong>Username:</strong> <input type="text" id="username"></p>
+    <p><strong>Display Name:</strong> <input type="text" id="displayName"></p>
+    <p><strong>Email:</strong> <input type="text" id="email"></p>
+    <h2>Skills</h2>
+    <textarea id="skills" rows="4" cols="50"></textarea>
+    <h2>Resources</h2>
+    <textarea id="resources" rows="4" cols="50"></textarea>
+    <!-- Add more sections as needed -->
+    <button onclick="saveChanges()">Save Changes</button>
 
     <script>
-        function toggleExpand(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
-                content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px";
-            } else {
-                content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
-            }
-        }
+        const url = 'https://api.github.com/repos/onelocaladmin/onelocalwebsite/contents/data.json';
+        const token = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN'; // Replace with your token
 
-        function saveField(fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
-        }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const userData = JSON.parse(atob(data.content));
+                document.getElementById("username").value = userData.username;
+                document.getElementById("displayName").value = userData.displayName;
+                document.getElementById("email").value = userData.email;
+                document.getElementById("profileImage").src = userData.profileImage;
+                document.getElementById("skills").value = userData.skills.join(', ');
+                document.getElementById("resources").value = userData.resources.join(', ');
+            })
+            .catch(error => console.error('Error fetching the JSON data:', error));
 
-        function addToFieldFromDropdown(dropdown, fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            const selectedValue = dropdown.value;
-            if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
-            } else {
-                document.getElementById(fieldId).value = selectedValue;
-            }
-        }
+        async function saveChanges() {
+            const updatedData = {
+                username: document.getElementById("username").value,
+                displayName: document.getElementById("displayName").value,
+                email: document.getElementById("email").value,
+                skills: document.getElementById("skills").value.split(', '),
+                resources: document.getElementById("resources").value.split(', '),
+                // ... add other fields as needed
+            };
 
-        function createExpandableContainer(key, value, iconUrl) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
+            // Fetch the current file to get its SHA
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': 'token ' + token
+                }
+            });
+            const data = await response.json();
+            const sha = data.sha;
 
-            const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
-            header.onclick = () => toggleExpand(header);
-
-            const content = document.createElement('div');
-            content.className = 'expandable-content';
-
-            if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
-                    dropdown.appendChild(option);
-                });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
-                content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
-                content.appendChild(input);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
-            content.appendChild(saveButton);
-
-            container.appendChild(header);
-            container.appendChild(content);
-
-            return container;
-        }
-
-        function handleDoubleClick(event) {
-            const clickedValue = event.target.value;
-            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = '';  // Clear existing containers
-                    for (let key in data) {
-                        if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                            const container = createExpandableContainer(key, data[key], data.icon);
-                            dynamicContainers.appendChild(container);
-                        }
-                    }
-                    document.getElementById('profileName').innerText = data.name;
-                    document.getElementById('profileImage').src = data.image;
-                    document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+            // Commit the updated content
+            await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': 'token ' + token
+                },
+                body: JSON.stringify({
+                    message: 'Update data.json',
+                    content: btoa(JSON.stringify(updatedData, null, 2)), // Encode content to base64
+                    sha: sha
                 })
-                .catch(error => console.error('Error fetching the JSON data:', error));
-        }
-
-        const lunaData = {
-            "_ID": "123456",
-            "type": "User",
-            "id": "U12345",
-            "name": "John Doe",
-            "type": "User",
-            "description": "A passionate event organizer and resource sharer.",
-            "icon": "icon_url_1.jpg",
-            "image": "image_url_1.jpg",
-            "backgroundImage": "bg_image_url_1.jpg",
-            "allies": ["U12346", "U12347"],
-            "items": ["Item1", "Item2"],
-            "createdAt": "2022-01-01",
-            "updatedAt": "2022-01-02",
-            "userType": "Regular",
-            "trueUser": {
-            "firstName": "John",
-            "lastName": "Doe",
-            "address": "123 Main St, City, Country",
-            "liveLocation": "City Central Park",
-            "checkinLocation": "City Cafe",
-            "email": "johndoe@email.com",
-            "password": "securepassword",
-            "profilePicture": "profile_pic_url_1.jpg",
-            "alternateIdentities": ["Character1", "Organization1"],
-            "bio": "I love organizing events and sharing resources.",
-            "location": "City, Country",
-            "myEvents": ["E12345", "E12346"],
-            "maybeEvents": ["E12347"],
-        };
-
-        document.getElementById('profileName').innerText = lunaData.name;
-        document.getElementById('profileImage').src = lunaData.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${lunaData.backgroundImage})`;
-
-        const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in lunaData) {
-            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);  // Passing lunaData.icon here
-                dynamicContainers.appendChild(container);
-            }
-        }
-
+            });
         }
     </script>
 </body>
-
 </html>
