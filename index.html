@@ -242,9 +242,11 @@
         const dynamicContainers = document.getElementById('dynamicContainers');
         for (let key in lunaData) {
             if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
+                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);  // Passing lunaData.icon here
                 dynamicContainers.appendChild(container);
             }
+        }
+
         }
     </script>
 </body>
