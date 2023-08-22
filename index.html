@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luna's Profile</title>
+    <title>user's Profile</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -97,7 +97,7 @@
 
 <body>
     <div class="top-container">
-        <h1 id="profileName">Luna's Profile</h1>
+        <h1 id="profileName">user's Profile</h1>
         <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
     </div>
 
@@ -202,27 +202,142 @@
                 .catch(error => console.error('Error fetching the JSON data:', error));
         }
 
-        const lunaData = {
-            "id": "luna",
-            "name": "Luna Starshine",
-            "type": "Human Mage",
-            "description": "Luna Starshine is a renowned mage known for her celestial magic. She's a seeker of knowledge and often embarks on quests to uncover ancient artifacts and secrets.",
-            "abilities": ["Starburst", "Celestial Sight", "Astral Projection"],
-            "icon": "https://i.imgur.com/YTFyCYO.jpg",
-            "image": "https://i.imgur.com/YTFyCYO.jpg",
-            "backgroundImage": "https://i.imgur.com/0SYKRVA.jpg",
-            "allies": ["aria_moonwhisper", "ember_dragon"],
-            "items": ["moonlit_wand"]
+        const userData = {
+            _ID: 123456
+            type: User
+            id: U12345
+            name: John Doe
+            description: A passionate event organizer and resource sharer.
+            icon: icon_url_1.jpg
+            image: image_url_1.jpg
+            backgroundImage: bg_image_url_1.jpg
+            allies[0]: U12346
+            allies[1]: U12347
+            items[0]: Item1
+            items[1]: Item2
+            createdAt: 2022-01-01
+            updatedAt: 2022-01-02
+            userType: Regular
+            trueUser.firstName: John
+            trueUser.lastName: Doe
+            trueUser.address: 123 Main St, City, Country
+            trueUser.liveLocation: City Central Park
+            trueUser.checkinLocation: City Cafe
+            trueUser.email: johndoe@email.com
+            trueUser.password: securepassword
+            trueUser.profilePicture: profile_pic_url_1.jpg
+            trueUser.alternateIdentities[0]: Character1
+            trueUser.alternateIdentities[1]: Organization1
+            trueUser.bio: I love organizing events and sharing resources.
+            trueUser.location: City, Country
+            trueUser.myEvents[0]: E12345
+            trueUser.myEvents[1]: E12346
+            trueUser.maybeEvents[0]: E12347
+            trueUser.invites.invitedBy[0]: U12346
+            trueUser.invites.event[0]: E12348
+            trueUser.skills[0]: Skill1
+            trueUser.skills[1]: Skill2
+            trueUser.resources.owned.forRent: true
+            trueUser.resources.owned.rentBooking[0]: 2022-01-10 to 2022-01-15
+            trueUser.resources.owned.rentedOut: true
+            trueUser.resources.owned.renter[0]: U12347
+            trueUser.resources.rented[0]: Resource1
+            trueUser.resources.borrowing[0]: Resource2
+            projects.title: Project Alpha
+            projects.description: A project to organize a community event.
+            projects.members[0]: U12345
+            projects.members[1]: U12346
+            projects.tasks[0]: T12345
+            projects.tasks[1]: T12346
+            projects.milestones[0]: Milestone1
+            projects.milestones[1]: Milestone2
+            projects.status: In Progress
+            org.name: Org Alpha
+            org.description: An organization for community events.
+            org.members[0]: U12345
+            org.members[1]: U12346
+            org.members[2]: U12347
+            org.roles[0]: Role1
+            org.roles[1]: Role2
+            org.projects[0]: P12345
+            org.projects[1]: P12346
+            task.title: Task Alpha
+            task.description: A task to prepare for the event.
+            task.assignee: U12345
+            task.status: Completed
+            task.dueDate: 2022-01-10
+            task.subTasks[0]: SubTask1
+            task.subTasks[1]: SubTask2
+            role.name: Organizer
+            role.description: Responsible for organizing events.
+            role.permissions[0]: Create Event
+            role.permissions[1]: Edit Event
+            badge.name: Top Organizer
+            badge.description: Awarded to the best event organizers.
+            badge.criteria: Organize 5 successful events.
+            group.name: Event Organizers
+            group.description: A group for event organizers.
+            group.members[0]: U12345
+            group.members[1]: U12346
+            group.posts[0]: Post1
+            group.posts[1]: Post2
+            product.name: Product Alpha
+            product.description: A product for event organizers.
+            product.price: $100
+            product.availability: In Stock
+            product.reviews[0]: Review1
+            product.reviews[1]: Review2
+            service.name: Service Alpha
+            service.description: A service for event organizers.
+            service.price: $50/hour
+            service.availability: Available
+            service.reviews[0]: Review3
+            service.reviews[1]: Review4
+            offer.name: Offer Alpha
+            offer.description: A special offer for early bird tickets.
+            offer.price: $80
+            offer.availability: Limited
+            request.name: Request Alpha
+            request.description: A request for volunteers for the event.
+            request.neededBy: 2022-01-05
+            gratis.points: 100
+            gratis.givenBy[0]: U12346
+            gratis.receivedBy[0]: U12347
+            gratis.receivedBy[1]: U12348
+            post.title: Post Alpha
+            post.content: Excited for the upcoming event!
+            post.likes[0]: U12346
+            post.likes[1]: U12347
+            post.comments[0]: Comment1
+            post.comments[1]: Comment2
+            comment.content: Me too!
+            comment.author: U12346
+            comment.likes[0]: U12345
+            interest.name: Event Organizing
+            interest.description: Interested in organizing and attending events.
+            purchase.product: Product Alpha
+            purchase.buyer: U12345
+            purchase.date: 2022-01-03
+            purchase.amount: $100
+            token.value: 50
+            token.type: In-game credit
+            token.expiryDate: 2023-01-01
+            gift.name: Gift Alpha
+            gift.description: A gift for the best event organizer.
+            gift.sender: U12346
+            gift.receiver: U12345
+            gift.date: 2022-01-01
+
         };
 
-        document.getElementById('profileName').innerText = lunaData.name;
-        document.getElementById('profileImage').src = lunaData.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${lunaData.backgroundImage})`;
+        document.getElementById('profileName').innerText = userData.name;
+        document.getElementById('profileImage').src = userData.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${userData.backgroundImage})`;
 
         const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in lunaData) {
+        for (let key in userata) {
             if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
+                const container = createExpandableContainer(key, userData[key], userData.icon);
                 dynamicContainers.appendChild(container);
             }
         }
