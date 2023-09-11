@@ -18,9 +18,9 @@
             flex-wrap: wrap;
             gap: 20px;
             justify-content: space-between;
-            align-items: flex-start;  /* Added this line */
+            align-items: flex-start; /* Added this line */
         }
-        
+
         .expandable-container {
             flex: 0 1 calc(33.33% - 20px); /* This will make each container take up roughly a third of the container's width, minus the gap */
             border: 1px solid #ccc;
@@ -71,7 +71,9 @@
             padding: 10px;
             display: none;
         }
-        select, input[type="text"] {
+
+        select,
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -104,7 +106,6 @@
     <div class="container" id="dynamicContainers">
         <!-- The expandable containers will be dynamically generated here -->
     </div>
-
 
     <script>
         function toggleExpand(element) {
@@ -161,14 +162,20 @@
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
+                input.addEventListener('dblclick', handleDoubleClick); // Add double-click event listener
                 content.appendChild(input);
+            } else if (key === 'website') {
+                const iframe = document.createElement('iframe');
+                iframe.src = value;
+                iframe.style.width = '100%';
+                iframe.style.height = '200px';
+                content.appendChild(iframe);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
                 input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick);  // Add double-click event listener
+                input.addEventListener('dblclick', handleDoubleClick); // Add double-click event listener
                 content.appendChild(input);
             }
 
@@ -188,18 +195,32 @@
             fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = '';  // Clear existing containers
+                    document.getElementById('dynamicContainers').innerHTML = ''; // Clear existing containers
                     for (let key in data) {
-                        if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                            const container = createExpandableContainer(key, data[key], data.icon);
+                        if (
+                            key !== "id" &&
+                            key !== "name" &&
+                            key !== "icon" &&
+                            key !== "image" &&
+                            key !== "backgroundImage"
+                        ) {
+                            const container = createExpandableContainer(
+                                key,
+                                data[key],
+                                data.icon
+                            );
                             dynamicContainers.appendChild(container);
                         }
                     }
                     document.getElementById('profileName').innerText = data.name;
                     document.getElementById('profileImage').src = data.image;
-                    document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+                    document.querySelector(
+                        '.top-container'
+                    ).style.backgroundImage = `url(${data.backgroundImage})`;
                 })
-                .catch(error => console.error('Error fetching the JSON data:', error));
+                .catch(error =>
+                    console.error('Error fetching the JSON data:', error)
+                );
         }
 
         const lunaData = {
@@ -219,7 +240,7 @@
             "address": "123 Main St, City, Country",
             "liveLocation": "City Central Park",
             "checkinLocation": "City Cafe",
-            "email": "johndoe@email.com",
+            "email": "johndoe@example.com",
             "password": "securepassword",
             "profilePicture": "profile_pic_url_1.jpg",
             "alternateIdentities": ["Character1", "Organization1"],
@@ -227,6 +248,10 @@
             "location": "City, Country",
             "myEvents": ["E12345", "E12346"],
             "maybeEvents": ["E12347"],
+            "website": "https://www.example.com",
+            "hobbies": ["Biking", "Traveling"],
+            "occupation": "Event Organizer",
+            "birthday": "January 1, 1990"
         };
 
         document.getElementById('profileName').innerText = lunaData.name;
@@ -235,8 +260,18 @@
 
         const dynamicContainers = document.getElementById('dynamicContainers');
         for (let key in lunaData) {
-            if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
-                const container = createExpandableContainer(key, lunaData[key], lunaData.icon);
+            if (
+                key !== "id" &&
+                key !== "name" &&
+                key !== "icon" &&
+                key !== "image" &&
+                key !== "backgroundImage"
+            ) {
+                const container = createExpandableContainer(
+                    key,
+                    lunaData[key],
+                    lunaData.icon
+                );
                 dynamicContainers.appendChild(container);
             }
         }
