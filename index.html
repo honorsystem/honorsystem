@@ -148,7 +148,13 @@
             const content = document.createElement('div');
             content.className = 'expandable-content';
 
-            if (Array.isArray(value)) {
+            if (key === 'liveLocation') {
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://earth.google.com/web/';
+                iframe.style.width = '100%';
+                iframe.style.height = '200px';
+                content.appendChild(iframe);
+            } else if (Array.isArray(value)) {
                 const dropdown = document.createElement('select');
                 value.forEach(item => {
                     const option = document.createElement('option');
