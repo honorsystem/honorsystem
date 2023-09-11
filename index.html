@@ -1,95 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Editor</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #181818;
-            padding: 20px;
-            color: #CCC;
-        }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .expandable-container {
-            flex: 1 1 300px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .expandable-container h3 {
-            margin: 0;
-            padding: 10px;
-            background: #333;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: white;
-        }
-
-        .content {
-            padding: 10px;
-            display: none;
-            background: #333;
-            color: white;
-        }
-
-        select,
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #999;
-            border-radius: 5px;
-            background: #333;
-            color: white;
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #666;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #999;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="top-container">
-        <h1>Loading...</h1>
-        <img id="image" src="#" alt="Profile Image">
+    <div class="loading-indicator" id="loadingIndicator">
+        <span>Loading...</span>
     </div>
 
-    <div class="container" id="dynamicContainers">
-        <!-- The expandable containers will be dynamically generated here -->
+    <div class="top-container">
+        <h1 id="Name">Loading...</h1>
+        <img id="Image" src="#" alt="User Image">
     </div>
+
+    <div class="container" id="dynamicContainers"></div>
 
     <script>
-        function toggleContent(element) {
-            const content = element.nextElementSibling;
-            if (content.style.display === "none") {
-                content.style.display = "block";
-                element.parentElement.style.overflowY = 'scroll';
+        function toggleExpand(header) {
+            const content = header.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
             } else {
-                content.style.display = "none";
-                element.parentElement.style.overflowY = 'hidden';
+                content.style.maxHeight = content.scrollHeight + "px";
             }
         }
 
@@ -101,100 +38,77 @@
         function addToFieldFromDropdown(dropdown, fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
             const selectedValue = dropdown.value;
-            if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
-            } else {
-                document.getElementById(fieldId).value = selectedValue;
-            }
+            document.getElementById(fieldId).value = fieldValue ? `${fieldValue}, ${selectedValue}` : selectedValue;
         }
 
-        function createExpandableContainer(key, value) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
+        function createExpandableContainerHTML(key, value, iconUrl) {
+            let contentHTML = '';
 
-            const header = document.createElement('h3');
-            header.textContent = key;
-            header.addEventListener('click', () => toggleContent(header));
-            container.appendChild(header);
+            if (key === 'liveLocation') {
+                contentHTML = `<iframe src='https://earth.google.com/web/' style='width: 100%; height: 200px;'></iframe>`;
+            } else if (Array.isArray(value)) {
+                const optionsHTML = value.map(item => `<option value='${item}'>${item}</option>`).join('');
+                contentHTML = `
+                    <select onchange="addToFieldFromDropdown(this, '${key}')">${optionsHTML}</select>
+                    <input type="text" id="${key}" ondblclick="handleDoubleClick(event)">
+                `;
+            } else if (key === 'website') {
+                contentHTML = `<iframe src='${value}' style='width: 100%; height: 200px;'></iframe>`;
+            } else {
+                contentHTML = `<input type="text" id="${key}" value="${value}" ondblclick="handleDoubleClick(event)">`;
+            }
 
-            const content = document.createElement('div');
-            content.className = 'content';
+            return `
+                <div class="expandable-container">
+                    <h2 onclick="toggleExpand(this)">
+                        <img src="${iconUrl}" alt="Icon for ${key}">
+                        ${key}
+                    </h2>
+                    <div class="expandable-content">
+                        ${contentHTML}
+                        <button onclick="saveField('${key}')">Save Changes</button>
+                    </div>
+                </div>
+            `;
+        }
 
-            if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.textContent = item;
-                    dropdown.appendChild(option);
+        function handleDoubleClick(event) {
+            const clickedValue = event.target.value;
+            document.getElementById('loadingIndicator').classList.add('active');
+            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    populateData(data);
+                    document.getElementById('loadingIndicator').classList.remove('active');
+                })
+                .catch(error => {
+                    console.error('Error fetching the JSON data:', error);
+                    document.getElementById('loadingIndicator').classList.remove('active');
+                    alert('Failed to fetch data. Please try again.');
                 });
-                dropdown.addEventListener('change', () => addToFieldFromDropdown(dropdown, key));
-                content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                content.appendChild(input);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.textContent = 'Save Changes';
-            saveButton.addEventListener('click', () => saveField(key));
-            content.appendChild(saveButton);
-
-            container.appendChild(content);
-            return container;
         }
 
-        const data = {
-            "id": "U12345",
-            "firstName": "John",
-            "lastName": "Doe",
-            "description": "A passionate event organizer and resource sharer.",
-            "icon": "https://i.imgur.com/YTFyCYO.jpg",
-            "image": "https://i.imgur.com/H1jOpkr.png",
-            "backgroundImage": "https://i.imgur.com/SStItzF.png",
-            "allies": ["U12346", "U12347"],
-            "aliases": ["scuba joe", "bob jones"],
-            "items": ["Item1", "Item2"],
-            "address": "123 Main St, City, Country",
-            "liveLocation": "City Central Park",
-            "checkinLocation": "City Cafe",
-            "email": "johndoe@example.com",
-            "password": "securepassword",
-            "picture": "pic_url_1.jpg",
-            "alternateIdentities": ["Character1", "Organization1"],
-            "bio": "I love organizing events and sharing resources.",
-            "location": "City, Country",
-            "myEvents": ["E12345", "E12346"],
-            "maybeEvents": ["E12347"],
-            "website": "https://www.example.com",
-            "hobbies": ["Biking", "Traveling"],
-            "occupation": "Event Organizer",
-            "birthday": "January 1, 1990"
-        };
-
-        document.getElementById('image').src = data.image;
-
-        const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in data) {
-            if (
-                key !== "id" &&
-                key !== "firstName" &&
-                key !== "lastName" &&
-                key !== "icon" &&
-                key !== "image" &&
-                key !== "backgroundImage"
-            ) {
-                const container = createExpandableContainer(key, data[key]);
-                dynamicContainers.appendChild(container);
+        function populateData(data) {
+            const dynamicContainers = document.getElementById('dynamicContainers');
+            dynamicContainers.innerHTML = '';
+            for (let key in data) {
+                if (key !== "id" && key !== "name" && key !== "icon" && key !== "image" && key !== "backgroundImage") {
+                    dynamicContainers.innerHTML += createExpandableContainerHTML(key, data[key], data.icon);
+                }
             }
+            document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+            document.getElementById('Image').src = data.image;
+            document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
         }
+
+        function initializePage() {
+            const data = {
+                // ... [Your data object here]
+            };
+            populateData(data);
+        }
+
+        window.onload = initializePage;
     </script>
 </body>
 
