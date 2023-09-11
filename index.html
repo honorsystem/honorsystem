@@ -1,43 +1,60 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Editor</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
             padding: 20px;
             color: #333;
         }
 
-        .container {
+        .top-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .top-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .top-container h1 {
+            margin-left: 10px;
         }
 
         .expandable-container {
-            flex: 1 1 300px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
-            overflow-y: auto;
             max-height: 300px;
+            overflow-y: auto;
         }
 
-        .expandable-container h3 {
-            margin: 0;
-            padding: 10px;
-            background: #e7e7e7;
+        .expandable-container h2 {
             display: flex;
             align-items: center;
             cursor: pointer;
+            background-color: #e7e7e7;
+            padding: 10px;
+            margin: 0;
         }
 
-        .content {
+        .expandable-container h2 img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .expandable-content {
             padding: 10px;
             display: none;
         }
@@ -53,7 +70,7 @@
 
         button {
             padding: 5px 10px;
-            background: #333;
+            background-color: #333;
             border: none;
             border-radius: 5px;
             color: white;
@@ -62,28 +79,23 @@
         }
 
         button:hover {
-            background: #555;
+            background-color: #555;
         }
     </style>
 </head>
-
 <body>
     <div class="top-container">
-        <h1>Loading...</h1>
-        <img id="image" src="#" alt="Profile Image">
+        <img id="Image" src="#" alt="Image">
+        <h1 id="Name">Loading...</h1>
     </div>
-
-    <div class="container" id="dynamicContainers">
-        <!-- The expandable containers will be dynamically generated here -->
-    </div>
+    <div id="dynamicContainers"></div>
 
     <script>
-        function toggleContent(element) {
+        function toggleExpand(element) {
             const content = element.nextElementSibling;
-            const maxHeight = "300px";
-            if (content.style.display === "none") {
+            if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = maxHeight;
+                element.parentElement.style.maxHeight = "500px";
             } else {
                 content.style.display = "none";
                 element.parentElement.style.maxHeight = "40px";
@@ -105,32 +117,30 @@
             }
         }
 
-        function createExpandableContainer(key, value) {
+        function createExpandableContainer(key, value, iconUrl) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
-            const header = document.createElement('h3');
-            header.textContent = key;
-            header.addEventListener('click', () => toggleContent(header));
-            container.appendChild(header);
+            const header = document.createElement('h2');
+            const icon = document.createElement('img');
+            icon.src = iconUrl;
+            header.appendChild(icon);
+            header.appendChild(document.createTextNode(key));
+            header.onclick = () => toggleExpand(header);
 
             const content = document.createElement('div');
-            content.className = 'content';
+            content.className = 'expandable-content';
 
             if (Array.isArray(value)) {
                 const dropdown = document.createElement('select');
                 value.forEach(item => {
                     const option = document.createElement('option');
-                    option.textContent = item;
+                    option.value = item;
+                    option.innerText = item;
                     dropdown.appendChild(option);
                 });
-                dropdown.addEventListener('change', () => addToFieldFromDropdown(dropdown, key));
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
                 content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                content.appendChild(input);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -140,15 +150,18 @@
             }
 
             const saveButton = document.createElement('button');
-            saveButton.textContent = 'Save Changes';
-            saveButton.addEventListener('click', () => saveField(key));
+            saveButton.innerText = 'Save Changes';
+            saveButton.onclick = () => saveField(key);
             content.appendChild(saveButton);
 
+            container.appendChild(header);
             container.appendChild(content);
             return container;
         }
 
         const data = {
+            "_ID": "123456",
+            "type": "User",
             "id": "U12345",
             "firstName": "John",
             "lastName": "Doe",
@@ -176,8 +189,6 @@
             "birthday": "January 1, 1990"
         };
 
-        document.getElementById('image').src = data.image;
-
         const dynamicContainers = document.getElementById('dynamicContainers');
         for (let key in data) {
             if (
@@ -188,11 +199,17 @@
                 key !== "image" &&
                 key !== "backgroundImage"
             ) {
-                const container = createExpandableContainer(key, data[key]);
+                const container = createExpandableContainer(
+                    key,
+                    data[key],
+                    data.icon
+                );
                 dynamicContainers.appendChild(container);
             }
         }
+
+        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+        document.getElementById('Image').src = data.image;
     </script>
 </body>
-
 </html>
