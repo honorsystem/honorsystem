@@ -2,12 +2,12 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Editor</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background: #f4f4f4;
             padding: 20px;
             color: #333;
@@ -17,12 +17,10 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            justify-content: space-between;
-            align-items: flex-start;
         }
 
         .expandable-container {
-            flex: 0 1 calc(33.33% - 20px); 
+            flex: 1 1 300px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -30,7 +28,7 @@
             max-height: 300px;
         }
 
-        .expandable-container h2 {
+        .expandable-container h3 {
             margin: 0;
             padding: 10px;
             background: #e7e7e7;
@@ -39,13 +37,7 @@
             cursor: pointer;
         }
 
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .expandable-content {
+        .content {
             padding: 10px;
             display: none;
         }
@@ -77,8 +69,8 @@
 
 <body>
     <div class="top-container">
-        <h1 id="name">Loading...</h1>
-        <img id="image" src="#" alt="User Image">
+        <h1>Loading...</h1>
+        <img id="image" src="#" alt="Profile Image">
     </div>
 
     <div class="container" id="dynamicContainers">
@@ -86,11 +78,12 @@
     </div>
 
     <script>
-        function toggleExpand(element) {
+        function toggleContent(element) {
             const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
+            const maxHeight = "300px";
+            if (content.style.display === "none") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px";
+                element.parentElement.style.maxHeight = maxHeight;
             } else {
                 content.style.display = "none";
                 element.parentElement.style.maxHeight = "40px";
@@ -102,39 +95,42 @@
             console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
-        function addToField(fieldId, value) {
+        function addToFieldFromDropdown(dropdown, fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
+            const selectedValue = dropdown.value;
             if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${value}`;
+                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
             } else {
-                document.getElementById(fieldId).value = value;
+                document.getElementById(fieldId).value = selectedValue;
             }
         }
 
-        function createExpandableContainer(key, value, iconUrl) {
+        function createExpandableContainer(key, value) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
-            const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
-            header.onclick = () => toggleExpand(header);
+            const header = document.createElement('h3');
+            header.textContent = key;
+            header.addEventListener('click', () => toggleContent(header));
+            container.appendChild(header);
 
             const content = document.createElement('div');
-            content.className = 'expandable-content';
+            content.className = 'content';
 
             if (Array.isArray(value)) {
                 const dropdown = document.createElement('select');
                 value.forEach(item => {
                     const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
+                    option.textContent = item;
                     dropdown.appendChild(option);
                 });
-                dropdown.onchange = () => addToField(key, dropdown.value);
+                dropdown.addEventListener('change', () => addToFieldFromDropdown(dropdown, key));
                 content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                content.appendChild(input);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -144,51 +140,16 @@
             }
 
             const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
+            saveButton.textContent = 'Save Changes';
+            saveButton.addEventListener('click', () => saveField(key));
             content.appendChild(saveButton);
 
-            container.appendChild(header);
             container.appendChild(content);
-
             return container;
         }
 
-        function loadUserData(url) {
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = '';
-                    for (let key in data) {
-                        if (
-                            key !== "id" &&
-                            key !== "name" &&
-                            key !== "icon" &&
-                            key !== "image" &&
-                            key !== "backgroundImage"
-                        ) {
-                            const container = createExpandableContainer(
-                                key,
-                                data[key],
-                                data.icon
-                            );
-                            dynamicContainers.appendChild(container);
-                        }
-                    }
-                    document.getElementById('name').innerText = `${data.firstName} ${data.lastName}`;
-                    document.getElementById('image').src = data.image;
-                    document.querySelector(
-                        '.top-container'
-                    ).style.backgroundImage = `url(${data.backgroundImage})`;
-                })
-                .catch(error =>
-                    console.error('Error fetching the JSON data:', error)
-                );
-        }
-
-        const userData = {
+        const data = {
             "id": "U12345",
-            "type": "User",
             "firstName": "John",
             "lastName": "Doe",
             "description": "A passionate event organizer and resource sharer.",
@@ -215,29 +176,22 @@
             "birthday": "January 1, 1990"
         };
 
-        document.getElementById('image').src = userData.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${userData.backgroundImage})`;
+        document.getElementById('image').src = data.image;
 
         const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in userData) {
+        for (let key in data) {
             if (
                 key !== "id" &&
-                key !== "name" &&
+                key !== "firstName" &&
+                key !== "lastName" &&
                 key !== "icon" &&
                 key !== "image" &&
                 key !== "backgroundImage"
             ) {
-                const container = createExpandableContainer(
-                    key,
-                    userData[key],
-                    userData.icon
-                );
+                const container = createExpandableContainer(key, data[key]);
                 dynamicContainers.appendChild(container);
             }
         }
-
-        // Loading example JSON data from external source
-        loadUserData('https://honorsystem.github.io/honorsystem/johndoe.json');
     </script>
 </body>
 
