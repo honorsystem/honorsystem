@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
+    <title>JSON Editor</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -28,28 +28,6 @@
             margin-bottom: 20px;
             overflow-y: auto;
             max-height: 300px;
-        }
-
-        .top-container {
-            width: 100%;
-            height: 250px;
-            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .expandable-container h2 {
@@ -99,8 +77,8 @@
 
 <body>
     <div class="top-container">
-        <h1 id="profileName">Loading...</h1>
-        <img id="profileImage" src="#" alt="Profile Image">
+        <h1 id="name">Loading...</h1>
+        <img id="image" src="#" alt="User Image">
     </div>
 
     <div class="container" id="dynamicContainers">
@@ -124,13 +102,12 @@
             console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
-        function addToFieldFromDropdown(dropdown, fieldId) {
+        function addToField(fieldId, value) {
             const fieldValue = document.getElementById(fieldId).value;
-            const selectedValue = dropdown.value;
             if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
+                document.getElementById(fieldId).value = `${fieldValue}, ${value}`;
             } else {
-                document.getElementById(fieldId).value = selectedValue;
+                document.getElementById(fieldId).value = value;
             }
         }
 
@@ -148,13 +125,7 @@
             const content = document.createElement('div');
             content.className = 'expandable-content';
 
-            if (key === 'liveLocation') {
-                const iframe = document.createElement('iframe');
-                iframe.src = 'https://earth.google.com/web/';
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
-            } else if (Array.isArray(value)) {
+            if (Array.isArray(value)) {
                 const dropdown = document.createElement('select');
                 value.forEach(item => {
                     const option = document.createElement('option');
@@ -162,26 +133,13 @@
                     option.innerText = item;
                     dropdown.appendChild(option);
                 });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                dropdown.onchange = () => addToField(key, dropdown.value);
                 content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick); 
-                content.appendChild(input);
-            } else if (key === 'website') {
-                const iframe = document.createElement('iframe');
-                iframe.src = value;
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
                 input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick); 
                 content.appendChild(input);
             }
 
@@ -196,12 +154,11 @@
             return container;
         }
 
-        function handleDoubleClick(event) {
-            const clickedValue = event.target.value;
-            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
+        function loadUserData(url) {
+            fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = ''; 
+                    document.getElementById('dynamicContainers').innerHTML = '';
                     for (let key in data) {
                         if (
                             key !== "id" &&
@@ -218,8 +175,8 @@
                             dynamicContainers.appendChild(container);
                         }
                     }
-                    document.getElementById('profileName').innerText = `${data.firstName} ${data.lastName}`;
-                    document.getElementById('profileImage').src = data.image;
+                    document.getElementById('name').innerText = `${data.firstName} ${data.lastName}`;
+                    document.getElementById('image').src = data.image;
                     document.querySelector(
                         '.top-container'
                     ).style.backgroundImage = `url(${data.backgroundImage})`;
@@ -229,12 +186,11 @@
                 );
         }
 
-        const data = {
-            "_ID": "123456",
-            "type": "User",
+        const userData = {
             "id": "U12345",
-            "firstName": "Cam",
-            "lastName": "Alot",
+            "type": "User",
+            "firstName": "John",
+            "lastName": "Doe",
             "description": "A passionate event organizer and resource sharer.",
             "icon": "https://i.imgur.com/YTFyCYO.jpg",
             "image": "https://i.imgur.com/H1jOpkr.png",
@@ -245,9 +201,9 @@
             "address": "123 Main St, City, Country",
             "liveLocation": "City Central Park",
             "checkinLocation": "City Cafe",
-            "email": "camalot@example.com",
+            "email": "johndoe@example.com",
             "password": "securepassword",
-            "profilePicture": "profile_pic_url_1.jpg",
+            "picture": "pic_url_1.jpg",
             "alternateIdentities": ["Character1", "Organization1"],
             "bio": "I love organizing events and sharing resources.",
             "location": "City, Country",
@@ -259,11 +215,11 @@
             "birthday": "January 1, 1990"
         };
 
-        document.getElementById('profileImage').src = data.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+        document.getElementById('image').src = userData.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${userData.backgroundImage})`;
 
         const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in data) {
+        for (let key in userData) {
             if (
                 key !== "id" &&
                 key !== "name" &&
@@ -273,12 +229,15 @@
             ) {
                 const container = createExpandableContainer(
                     key,
-                    data[key],
-                    data.icon
+                    userData[key],
+                    userData.icon
                 );
                 dynamicContainers.appendChild(container);
             }
         }
+
+        // Loading example JSON data from external source
+        loadUserData('https://honorsystem.github.io/honorsystem/johndoe.json');
     </script>
 </body>
 
