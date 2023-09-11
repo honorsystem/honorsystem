@@ -1,62 +1,47 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Editor</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            background: #181818;
             padding: 20px;
-            color: #333;
+            color: #CCC;
         }
 
-        .top-container {
+        .container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .top-container img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .top-container h1 {
-            margin-left: 10px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .expandable-container {
+            flex: 1 1 300px;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
-            max-height: 300px;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
-        .expandable-container h2 {
+        .expandable-container h3 {
+            margin: 0;
+            padding: 10px;
+            background: #333;
             display: flex;
             align-items: center;
             cursor: pointer;
-            background-color: #e7e7e7;
-            padding: 10px;
-            margin: 0;
+            color: white;
         }
 
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .expandable-content {
+        .content {
             padding: 10px;
             display: none;
+            background: #333;
+            color: white;
         }
 
         select,
@@ -64,13 +49,15 @@
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #999;
             border-radius: 5px;
+            background: #333;
+            color: white;
         }
 
         button {
             padding: 5px 10px;
-            background-color: #333;
+            background: #666;
             border: none;
             border-radius: 5px;
             color: white;
@@ -79,26 +66,30 @@
         }
 
         button:hover {
-            background-color: #555;
+            background: #999;
         }
     </style>
 </head>
+
 <body>
     <div class="top-container">
-        <img id="Image" src="#" alt="Image">
-        <h1 id="Name">Loading...</h1>
+        <h1>Loading...</h1>
+        <img id="image" src="#" alt="Profile Image">
     </div>
-    <div id="dynamicContainers"></div>
+
+    <div class="container" id="dynamicContainers">
+        <!-- The expandable containers will be dynamically generated here -->
+    </div>
 
     <script>
-        function toggleExpand(element) {
+        function toggleContent(element) {
             const content = element.nextElementSibling;
-            if (content.style.display === "none" || content.style.display === "") {
+            if (content.style.display === "none") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px";
+                element.parentElement.style.overflowY = 'scroll';
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
+                element.parentElement.style.overflowY = 'hidden';
             }
         }
 
@@ -117,30 +108,32 @@
             }
         }
 
-        function createExpandableContainer(key, value, iconUrl) {
+        function createExpandableContainer(key, value) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
-            const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
-            header.onclick = () => toggleExpand(header);
+            const header = document.createElement('h3');
+            header.textContent = key;
+            header.addEventListener('click', () => toggleContent(header));
+            container.appendChild(header);
 
             const content = document.createElement('div');
-            content.className = 'expandable-content';
+            content.className = 'content';
 
             if (Array.isArray(value)) {
                 const dropdown = document.createElement('select');
                 value.forEach(item => {
                     const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
+                    option.textContent = item;
                     dropdown.appendChild(option);
                 });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                dropdown.addEventListener('change', () => addToFieldFromDropdown(dropdown, key));
                 content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                content.appendChild(input);
             } else {
                 const input = document.createElement('input');
                 input.type = 'text';
@@ -150,18 +143,15 @@
             }
 
             const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
+            saveButton.textContent = 'Save Changes';
+            saveButton.addEventListener('click', () => saveField(key));
             content.appendChild(saveButton);
 
-            container.appendChild(header);
             container.appendChild(content);
             return container;
         }
 
         const data = {
-            "_ID": "123456",
-            "type": "User",
             "id": "U12345",
             "firstName": "John",
             "lastName": "Doe",
@@ -189,6 +179,8 @@
             "birthday": "January 1, 1990"
         };
 
+        document.getElementById('image').src = data.image;
+
         const dynamicContainers = document.getElementById('dynamicContainers');
         for (let key in data) {
             if (
@@ -199,17 +191,11 @@
                 key !== "image" &&
                 key !== "backgroundImage"
             ) {
-                const container = createExpandableContainer(
-                    key,
-                    data[key],
-                    data.icon
-                );
+                const container = createExpandableContainer(key, data[key]);
                 dynamicContainers.appendChild(container);
             }
         }
-
-        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
-        document.getElementById('Image').src = data.image;
     </script>
 </body>
+
 </html>
