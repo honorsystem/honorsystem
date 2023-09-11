@@ -18,11 +18,11 @@
             flex-wrap: wrap;
             gap: 20px;
             justify-content: space-between;
-            align-items: flex-start; /* Added this line */
+            align-items: flex-start;
         }
 
         .expandable-container {
-            flex: 0 1 calc(33.33% - 20px); /* This will make each container take up roughly a third of the container's width, minus the gap */
+            flex: 0 1 calc(33.33% - 20px); 
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -99,8 +99,8 @@
 
 <body>
     <div class="top-container">
-        <h1 id="profileName">Luna's Profile</h1>
-        <img id="profileImage" src="https://i.imgur.com/YTFyCYO.jpg" alt="Profile Image">
+        <h1 id="profileName">Loading...</h1>
+        <img id="profileImage" src="#" alt="Profile Image">
     </div>
 
     <div class="container" id="dynamicContainers">
@@ -150,7 +150,7 @@
 
             if (key === 'liveLocation') {
                 const iframe = document.createElement('iframe');
-                iframe.src = 'https://www.google.com/maps';
+                iframe.src = 'https://earth.google.com/web/';
                 iframe.style.width = '100%';
                 iframe.style.height = '200px';
                 content.appendChild(iframe);
@@ -168,7 +168,7 @@
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick); // Add double-click event listener
+                input.addEventListener('dblclick', handleDoubleClick); 
                 content.appendChild(input);
             } else if (key === 'website') {
                 const iframe = document.createElement('iframe');
@@ -181,7 +181,7 @@
                 input.type = 'text';
                 input.id = key;
                 input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick); // Add double-click event listener
+                input.addEventListener('dblclick', handleDoubleClick); 
                 content.appendChild(input);
             }
 
@@ -201,7 +201,7 @@
             fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = ''; // Clear existing containers
+                    document.getElementById('dynamicContainers').innerHTML = ''; 
                     for (let key in data) {
                         if (
                             key !== "id" &&
@@ -218,7 +218,7 @@
                             dynamicContainers.appendChild(container);
                         }
                     }
-                    document.getElementById('profileName').innerText = data.name;
+                    document.getElementById('profileName').innerText = `${data.firstName} ${data.lastName}`;
                     document.getElementById('profileImage').src = data.image;
                     document.querySelector(
                         '.top-container'
@@ -229,11 +229,12 @@
                 );
         }
 
-        const lunaData = {
+        const data = {
             "_ID": "123456",
             "type": "User",
             "id": "U12345",
-            "name": "John Doe",
+            "firstName": "Cam",
+            "lastName": "Alot",
             "description": "A passionate event organizer and resource sharer.",
             "icon": "https://i.imgur.com/YTFyCYO.jpg",
             "image": "https://i.imgur.com/H1jOpkr.png",
@@ -241,12 +242,10 @@
             "allies": ["U12346", "U12347"],
             "aliases": ["scuba joe", "bob jones"],
             "items": ["Item1", "Item2"],
-            "firstName": "John",
-            "lastName": "Doe",
             "address": "123 Main St, City, Country",
             "liveLocation": "City Central Park",
             "checkinLocation": "City Cafe",
-            "email": "johndoe@example.com",
+            "email": "camalot@example.com",
             "password": "securepassword",
             "profilePicture": "profile_pic_url_1.jpg",
             "alternateIdentities": ["Character1", "Organization1"],
@@ -260,12 +259,11 @@
             "birthday": "January 1, 1990"
         };
 
-        document.getElementById('profileName').innerText = lunaData.name;
-        document.getElementById('profileImage').src = lunaData.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${lunaData.backgroundImage})`;
+        document.getElementById('profileImage').src = data.image;
+        document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
 
         const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in lunaData) {
+        for (let key in data) {
             if (
                 key !== "id" &&
                 key !== "name" &&
@@ -275,8 +273,8 @@
             ) {
                 const container = createExpandableContainer(
                     key,
-                    lunaData[key],
-                    lunaData.icon
+                    data[key],
+                    data.icon
                 );
                 dynamicContainers.appendChild(container);
             }
