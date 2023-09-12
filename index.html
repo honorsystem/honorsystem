@@ -112,10 +112,10 @@
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px";
+                element.parentElement.style.maxHeight = "500px"; // or whatever maximum height you want for expanded containers
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "40px";
+                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
             }
         }
 
