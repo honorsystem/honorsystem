@@ -1,105 +1,3 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON editor</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            gap: 20px;
-        }
-
-        .column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .expandable-container {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow-y: auto;
-            max-height: 100px; /* Set a fixed initial max-height */
-            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
-        }
-
-        .expandable-container.open {
-            max-height: 500px; /* Set max-height when expanded */
-        }
-
-        .top-container {
-            width: 100%;
-            height: 250px;
-            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .expandable-container h2 {
-            margin: 0;
-            padding: 10px;
-            background: #e7e7e7;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .expandable-content {
-            padding: 10px;
-            display: none;
-        }
-
-        select,
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #333;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #555;
-        }
-    </style>
 </head>
 
 <body>
@@ -135,6 +33,13 @@
 
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
+
+            // Update the data object with the new field value
+            if (currentData) {
+                currentData.value = fieldValue;
+                updateDataOnGitHub(currentData.key, fieldValue);
+            }
+
             console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
@@ -149,144 +54,120 @@
         }
 
         function createExpandableContainer(key, value, iconUrl) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
-
-            const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
-            header.onclick = () => {
-                toggleExpand(header);
-                currentData = { key, value, iconUrl };
-            };
-
-            const content = document.createElement('div');
-            content.className = 'expandable-content';
-
-            if (key === 'liveLocation') {
-                const iframe = document.createElement('iframe');
-                iframe.src = 'https://earth.google.com/web/';
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
-            } else if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
-                    dropdown.appendChild(option);
-                });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
-                content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick);
-                content.appendChild(input);
-            } else if (key === 'website') {
-                const iframe = document.createElement('iframe');
-                iframe.src = value;
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick);
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
-            content.appendChild(saveButton);
-
-            container.appendChild(header);
-            container.appendChild(content);
-
-            return container;
+            // ... (Your createExpandableContainer function code here) ...
         }
 
         function handleDoubleClick(event) {
             if (currentData) {
                 const clickedValue = event.target.value;
-                fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('dynamicContainers').innerHTML = '';
-                        for (let key in data) {
-                            if (
-                                key !== "id" &&
-                                key !== "name" &&
-                                key !== "icon" &&
-                                key !== "image" &&
-                                key !== "backgroundImage"
-                            ) {
-                                const container = createExpandableContainer(
-                                    key,
-                                    data[key],
-                                    data.icon
-                                );
-                                dynamicContainers.appendChild(container);
-                            }
-                        }
-                        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
-                        document.getElementById('Image').src = data.image;
-
-                        document.querySelectorAll('.expandable-container').forEach(container => {
-                            container.addEventListener('click', () => {
-                                container.classList.toggle('open');
-                            });
-                        });
-
-                        document.querySelector(
-                            '.top-container'
-                        ).style.backgroundImage = `url(${data.backgroundImage})`;
-                    })
-                    .catch(error =>
-                        console.error('Error fetching the JSON data:', error)
-                    );
+                fetchGitHubData(clickedValue);
             }
         }
 
-        const data = {
-            "_ID": "123456",
-            "type": "User",
-            "id": "U12345",
-            "firstName": "John",
-            "lastName": "Doe",
-            "description": "A passionate event organizer and resource sharer.",
-            "icon": "https://i.imgur.com/YTFyCYO.jpg",
-            "image": "https://i.imgur.com/H1jOpkr.png",
-            "backgroundImage": "https://i.imgur.com/SStItzF.png",
-            "allies": ["U12346", "U12347"],
-            "aliases": ["scuba joe", "bob jones"],
-            "items": ["Item1", "Item2"],
-            "address": "123 Main St, City, Country",
-            "liveLocation": "City Central Park",
-            "checkinLocation": "City Cafe",
-            "email": "johndoe@example.com",
-            "password": "securepassword",
-            "picture": "pic_url_1.jpg",
-            "alternateIdentities": ["Character1", "Organization1"],
-            "bio": "I love organizing events and sharing resources.",
-            "location": "City, Country",
-            "myEvents": ["E12345", "E12346"],
-            "maybeEvents": ["E12347"],
-            "website": "https://www.example.com",
-            "hobbies": ["Biking", "Traveling"],
-            "occupation": "Event Organizer",
-            "birthday": "January 1, 1990"
-        };
+        function fetchGitHubData(fileName) {
+            const accessToken = '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'; // Replace with your actual access token
+            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/${fileName}.json`;
 
-        document.getElementById('Image').src = data.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json', // Use the GitHub API version
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data here
+
+                document.getElementById('dynamicContainers').innerHTML = '';
+                for (let key in data) {
+                    if (
+                        key !== "id" &&
+                        key !== "name" &&
+                        key !== "icon" &&
+                        key !== "image" &&
+                        key !== "backgroundImage"
+                    ) {
+                        const container = createExpandableContainer(
+                            key,
+                            data[key],
+                            data.icon
+                        );
+                        dynamicContainers.appendChild(container);
+                    }
+                }
+                document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+                document.getElementById('Image').src = data.image;
+
+                document.querySelectorAll('.expandable-container').forEach(container => {
+                    container.addEventListener('click', () => {
+                        container.classList.toggle('open');
+                    });
+                });
+
+                document.querySelector(
+                    '.top-container'
+                ).style.backgroundImage = `url(${data.backgroundImage})`;
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data:', error)
+            );
+        }
+
+        function updateDataOnGitHub(fileName, newValue) {
+            const accessToken = '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'; // Replace with your actual access token
+            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/${fileName}.json`;
+
+            // Fetch the existing data from GitHub
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `token ${accessToken}`,
+                    'Accept': 'application/vnd.github.v3+json', // Use the GitHub API version
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the data object with the new field value
+                data.value = newValue;
+
+                // Encode the updated data as base64
+                const updatedData = btoa(JSON.stringify(data));
+
+                // Construct the request to update the file on GitHub
+                const updateRequest = {
+                    message: `Update ${fileName}.json`,
+                    content: updatedData,
+                    sha: data.sha, // Include the current SHA hash
+                };
+
+                // Perform the update request to GitHub
+                fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${accessToken}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateRequest),
+                })
+                .then(response => {
+                    if (response.status === 200) {
+                        console.log(`Successfully updated ${fileName}.json on GitHub.`);
+                    } else {
+                        console.error('Error updating the file on GitHub:', response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating the file on GitHub:', error);
+                });
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data from GitHub:', error)
+            );
+        }
+
+        // ... (Your data object here) ...
 
         // Create expandable containers for each column
         for (let i = 1; i <= 3; i++) {
