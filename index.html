@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON editor</title>
+    <style>
+        /* Your CSS styles here */
+    </style>
 </head>
 
 <body>
@@ -6,16 +16,8 @@
         <img id="Image" src="https://i.imgur.com/H1jOpkr.png" alt="Image">
     </div>
 
-    <div class="container">
-        <div class="column" id="dynamicContainer1">
-            <!-- The expandable containers for column 1 will be dynamically generated here -->
-        </div>
-        <div class="column" id="dynamicContainer2">
-            <!-- The expandable containers for column 2 will be dynamically generated here -->
-        </div>
-        <div class="column" id="dynamicContainer3">
-            <!-- The expandable containers for column 3 will be dynamically generated here -->
-        </div>
+    <div class="container" id="dynamicContainers">
+        <!-- The expandable containers will be dynamically generated here -->
     </div>
 
     <script>
@@ -27,14 +29,13 @@
                 content.style.display = "block";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
+                element.parentElement.style.maxHeight = "auto";
             }
         }
 
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
 
-            // Update the data object with the new field value
             if (currentData) {
                 currentData.value = fieldValue;
                 updateDataOnGitHub(currentData.key, fieldValue);
@@ -43,71 +44,56 @@
             console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
-        function addToFieldFromDropdown(dropdown, fieldId) {
-            const fieldValue = document.getElementById(fieldId).value;
-            const selectedValue = dropdown.value;
-            if (fieldValue) {
-                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
-            } else {
-                document.getElementById(fieldId).value = selectedValue;
-            }
+        function createExpandableContainer(key, value) {
+            const container = document.createElement('div');
+            container.className = 'expandable-container';
+
+            const header = document.createElement('h2');
+            header.appendChild(document.createTextNode(key));
+            header.onclick = () => {
+                toggleExpand(header);
+                currentData = { key, value };
+            };
+
+            const content = document.createElement('div');
+            content.className = 'expandable-content';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = key;
+            input.value = value;
+            content.appendChild(input);
+
+            const saveButton = document.createElement('button');
+            saveButton.innerText = 'Save Changes';
+            saveButton.onclick = () => saveField(key);
+            content.appendChild(saveButton);
+
+            container.appendChild(header);
+            container.appendChild(content);
+
+            return container;
         }
 
-        function createExpandableContainer(key, value, iconUrl) {
-            // ... (Your createExpandableContainer function code here) ...
-        }
-
-        function handleDoubleClick(event) {
-            if (currentData) {
-                const clickedValue = event.target.value;
-                fetchGitHubData(clickedValue);
-            }
-        }
-
-        function fetchGitHubData(fileName) {
+        function fetchGitHubData() {
             const accessToken = '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'; // Replace with your actual access token
-            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/${fileName}.json`;
+            const apiUrl = 'https://raw.githubusercontent.com/honorsystem/honorsystem/main/data.json';
 
             fetch(apiUrl, {
                 method: 'GET',
                 headers: {
                     'Authorization': `token ${accessToken}`,
-                    'Accept': 'application/vnd.github.v3+json', // Use the GitHub API version
                 },
             })
             .then(response => response.json())
             .then(data => {
-                // Handle the response data here
-
                 document.getElementById('dynamicContainers').innerHTML = '';
                 for (let key in data) {
-                    if (
-                        key !== "id" &&
-                        key !== "name" &&
-                        key !== "icon" &&
-                        key !== "image" &&
-                        key !== "backgroundImage"
-                    ) {
-                        const container = createExpandableContainer(
-                            key,
-                            data[key],
-                            data.icon
-                        );
-                        dynamicContainers.appendChild(container);
-                    }
+                    const container = createExpandableContainer(key, data[key]);
+                    dynamicContainers.appendChild(container);
                 }
                 document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
                 document.getElementById('Image').src = data.image;
-
-                document.querySelectorAll('.expandable-container').forEach(container => {
-                    container.addEventListener('click', () => {
-                        container.classList.toggle('open');
-                    });
-                });
-
-                document.querySelector(
-                    '.top-container'
-                ).style.backgroundImage = `url(${data.backgroundImage})`;
             })
             .catch(error =>
                 console.error('Error fetching the JSON data:', error)
@@ -116,32 +102,25 @@
 
         function updateDataOnGitHub(fileName, newValue) {
             const accessToken = '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'; // Replace with your actual access token
-            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/${fileName}.json`;
+            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/data.json`;
 
-            // Fetch the existing data from GitHub
             fetch(apiUrl, {
                 method: 'GET',
                 headers: {
                     'Authorization': `token ${accessToken}`,
-                    'Accept': 'application/vnd.github.v3+json', // Use the GitHub API version
+                    'Accept': 'application/vnd.github.v3+json',
                 },
             })
             .then(response => response.json())
             .then(data => {
-                // Update the data object with the new field value
-                data.value = newValue;
+                data.content = btoa(JSON.stringify({ ...JSON.parse(atob(data.content)), [fileName]: newValue }));
 
-                // Encode the updated data as base64
-                const updatedData = btoa(JSON.stringify(data));
-
-                // Construct the request to update the file on GitHub
                 const updateRequest = {
-                    message: `Update ${fileName}.json`,
-                    content: updatedData,
-                    sha: data.sha, // Include the current SHA hash
+                    message: `Update ${fileName} field in data.json`,
+                    content: data.content,
+                    sha: data.sha,
                 };
 
-                // Perform the update request to GitHub
                 fetch(apiUrl, {
                     method: 'PUT',
                     headers: {
@@ -153,42 +132,21 @@
                 })
                 .then(response => {
                     if (response.status === 200) {
-                        console.log(`Successfully updated ${fileName}.json on GitHub.`);
+                        console.log(`Successfully updated ${fileName} field on GitHub.`);
                     } else {
-                        console.error('Error updating the file on GitHub:', response.statusText);
+                        console.error('Error updating the field on GitHub:', response.statusText);
                     }
                 })
                 .catch(error => {
-                    console.error('Error updating the file on GitHub:', error);
+                    console.error('Error updating the field on GitHub:', error);
                 });
             })
             .catch(error =>
-                console.error('Error fetching the JSON data from GitHub:', error)
+                console.error('Error fetching data.json from GitHub:', error)
             );
         }
 
-        // ... (Your data object here) ...
-
-        // Create expandable containers for each column
-        for (let i = 1; i <= 3; i++) {
-            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-            for (let key in data) {
-                if (
-                    key !== "id" &&
-                    key !== "name" &&
-                    key !== "icon" &&
-                    key !== "image" &&
-                    key !== "backgroundImage"
-                ) {
-                    const container = createExpandableContainer(
-                        key,
-                        data[key],
-                        data.icon
-                    );
-                    dynamicContainers.appendChild(container);
-                }
-            }
-        }
+        fetchGitHubData();
     </script>
 </body>
 
