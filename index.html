@@ -151,8 +151,10 @@
         function handleDoubleClick(event) {
             if (currentData) {
                 const clickedValue = event.target.value;
-                const jsonUrl = `https://honorsystem.github.io/honorsystem/${clickedValue}.json`; // Construct the URL
-                fetch(jsonUrl) // Fetch the specific JSON file
+                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+
+                // Fetch JSON data from the relative path
+                fetch(jsonUrl)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -233,11 +235,12 @@
 
             return container;
         }
-
-        fetch('https://raw.githubusercontent.com/honorsystem/honorsystem/main/data.json')
+        
+        fetch('./data.json')
             .then(response => response.json())
             .then(jsonData => {
-                updateUIWithData(jsonData); // Update the UI with the initial data
+                data = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data); // Update the UI with the initial data
             })
             .catch(error =>
                 console.error('Error fetching the JSON data:', error)
