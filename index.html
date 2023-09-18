@@ -228,6 +228,11 @@
                     }
                     document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
                     document.getElementById('Image').src = data.image;
+                    document.querySelectorAll('.expandable-container').forEach(container => {
+                        container.addEventListener('click', () => {
+                            container.classList.toggle('open');
+                        });
+                    });
                     document.querySelector(
                         '.top-container'
                     ).style.backgroundImage = `url(${data.backgroundImage})`;
