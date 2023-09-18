@@ -12,18 +12,18 @@
             padding: 20px;
             color: #333;
         }
-
         .container {
             display: flex;
+            justify-content: space-between;
             gap: 20px;
         }
-
+        
         .column {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-
+        
         .expandable-container {
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -31,7 +31,7 @@
             max-height: 100px; /* Set a fixed initial max-height */
             transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
         }
-
+        
         .expandable-container.open {
             max-height: 500px; /* Set max-height when expanded */
         }
@@ -110,19 +110,17 @@
 
     <div class="container">
         <div class="column" id="dynamicContainer1">
-            <!-- The expandable containers for column 1 will be dynamically generated here -->
+            <!-- The expandable containers will be dynamically generated here -->
         </div>
         <div class="column" id="dynamicContainer2">
-            <!-- The expandable containers for column 2 will be dynamically generated here -->
+            <!-- The expandable containers will be dynamically generated here -->
         </div>
         <div class="column" id="dynamicContainer3">
-            <!-- The expandable containers for column 3 will be dynamically generated here -->
+            <!-- The expandable containers will be dynamically generated here -->
         </div>
     </div>
 
     <script>
-        let currentData = null;
-
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
@@ -157,10 +155,7 @@
             icon.src = iconUrl;
             header.appendChild(icon);
             header.appendChild(document.createTextNode(key));
-            header.onclick = () => {
-                toggleExpand(header);
-                currentData = { key, value, iconUrl };
-            };
+            header.onclick = () => toggleExpand(header);
 
             const content = document.createElement('div');
             content.className = 'expandable-content';
@@ -214,100 +209,78 @@
         }
 
         function handleDoubleClick(event) {
-            if (currentData) {
-                const clickedValue = event.target.value;
-                fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('dynamicContainers').innerHTML = '';
-                        for (let key in data) {
-                            if (
-                                key !== "id" &&
-                                key !== "name" &&
-                                key !== "icon" &&
-                                key !== "image" &&
-                                key !== "backgroundImage"
-                            ) {
-                                const container = createExpandableContainer(
-                                    key,
-                                    data[key],
-                                    data.icon
-                                );
-                                dynamicContainers.appendChild(container);
-                            }
+            const clickedValue = event.target.value;
+            const jsonFileUrl = `https://honorsystem.github.io/honorsystem/${clickedValue}.json`;
+
+            fetch(jsonFileUrl)
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the previous content in the dynamic containers
+                    const dynamicContainers = document.getElementById('dynamicContainer1');
+                    dynamicContainers.innerHTML = '';
+
+                    // Create new expandable containers with the fetched data
+                    for (let key in data) {
+                        if (
+                            key !== "id" &&
+                            key !== "name" &&
+                            key !== "icon" &&
+                            key !== "image" &&
+                            key !== "backgroundImage"
+                        ) {
+                            const container = createExpandableContainer(
+                                key,
+                                data[key],
+                                data.icon
+                            );
+                            dynamicContainers.appendChild(container);
                         }
-                        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
-                        document.getElementById('Image').src = data.image;
+                    }
 
-                        document.querySelectorAll('.expandable-container').forEach(container => {
-                            container.addEventListener('click', () => {
-                                container.classList.toggle('open');
-                            });
+                    // Update other content based on the fetched data
+                    document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+                    document.getElementById('Image').src = data.image;
+
+                    // Add event listeners to newly created expandable containers
+                    document.querySelectorAll('.expandable-container').forEach(container => {
+                        container.addEventListener('click', () => {
+                            container.classList.toggle('open');
                         });
+                    });
 
-                        document.querySelector(
-                            '.top-container'
-                        ).style.backgroundImage = `url(${data.backgroundImage})`;
-                    })
-                    .catch(error =>
-                        console.error('Error fetching the JSON data:', error)
-                    );
-            }
+                    document.querySelector(
+                        '.top-container'
+                    ).style.backgroundImage = `url(${data.backgroundImage})`;
+                })
+                .catch(error => {
+                    console.error('Error fetching the JSON data:', error);
+                });
         }
 
+        // Initial data (you can replace this with your own data)
         const data = {
             "_ID": "123456",
             "type": "User",
             "id": "U12345",
-            "firstName": "John",
+            "firstName": "Cameron",
             "lastName": "Doe",
             "description": "A passionate event organizer and resource sharer.",
             "icon": "https://i.imgur.com/YTFyCYO.jpg",
             "image": "https://i.imgur.com/H1jOpkr.png",
             "backgroundImage": "https://i.imgur.com/SStItzF.png",
-            "allies": ["U12346", "U12347"],
-            "aliases": ["scuba joe", "bob jones"],
-            "items": ["Item1", "Item2"],
-            "address": "123 Main St, City, Country",
-            "liveLocation": "City Central Park",
-            "checkinLocation": "City Cafe",
-            "email": "johndoe@example.com",
-            "password": "securepassword",
-            "picture": "pic_url_1.jpg",
-            "alternateIdentities": ["Character1", "Organization1"],
-            "bio": "I love organizing events and sharing resources.",
-            "location": "City, Country",
-            "myEvents": ["E12345", "E12346"],
-            "maybeEvents": ["E12347"],
-            "website": "https://www.example.com",
-            "hobbies": ["Biking", "Traveling"],
-            "occupation": "Event Organizer",
-            "birthday": "January 1, 1990"
+            // Add more data properties as needed
         };
 
+        // Set initial values
         document.getElementById('Image').src = data.image;
         document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
 
-        // Create expandable containers for each column
-        for (let i = 1; i <= 3; i++) {
-            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-            for (let key in data) {
-                if (
-                    key !== "id" &&
-                    key !== "name" &&
-                    key !== "icon" &&
-                    key !== "image" &&
-                    key !== "backgroundImage"
-                ) {
-                    const container = createExpandableContainer(
-                        key,
-                        data[key],
-                        data.icon
-                    );
-                    dynamicContainers.appendChild(container);
-                }
-            }
-        }
+        // Add event listeners to expandable containers
+        document.querySelectorAll('.expandable-container').forEach(container => {
+            container.addEventListener('click', () => {
+                container.classList.toggle('open');
+            });
+        });
     </script>
 </body>
 
