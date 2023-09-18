@@ -129,7 +129,7 @@
                 content.style.display = "block";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
+                element.parentElement.style.maxHeight = "auto"; 
             }
         }
 
@@ -149,148 +149,81 @@
         }
 
         function createExpandableContainer(key, value, iconUrl) {
-            const container = document.createElement('div');
-            container.className = 'expandable-container';
-
-            const header = document.createElement('h2');
-            const icon = document.createElement('img');
-            icon.src = iconUrl;
-            header.appendChild(icon);
-            header.appendChild(document.createTextNode(key));
-            header.onclick = () => {
-                toggleExpand(header);
-                currentData = { key, value, iconUrl };
-            };
-
-            const content = document.createElement('div');
-            content.className = 'expandable-content';
-
-            if (key === 'liveLocation') {
-                const iframe = document.createElement('iframe');
-                iframe.src = 'https://earth.google.com/web/';
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
-            } else if (Array.isArray(value)) {
-                const dropdown = document.createElement('select');
-                value.forEach(item => {
-                    const option = document.createElement('option');
-                    option.value = item;
-                    option.innerText = item;
-                    dropdown.appendChild(option);
-                });
-                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
-                content.appendChild(dropdown);
-
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick);
-                content.appendChild(input);
-            } else if (key === 'website') {
-                const iframe = document.createElement('iframe');
-                iframe.src = value;
-                iframe.style.width = '100%';
-                iframe.style.height = '200px';
-                content.appendChild(iframe);
-            } else {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.id = key;
-                input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick);
-                content.appendChild(input);
-            }
-
-            const saveButton = document.createElement('button');
-            saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
-            content.appendChild(saveButton);
-
-            container.appendChild(header);
-            container.appendChild(content);
-
-            return container;
+            // Create your expandable container element here
         }
 
         function handleDoubleClick(event) {
-            if (currentData) {
-                const clickedValue = event.target.value;
-                fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById('dynamicContainers').innerHTML = '';
-                        for (let key in data) {
-                            if (
-                                key !== "id" &&
-                                key !== "name" &&
-                                key !== "icon" &&
-                                key !== "image" &&
-                                key !== "backgroundImage"
-                            ) {
-                                const container = createExpandableContainer(
-                                    key,
-                                    data[key],
-                                    data.icon
-                                );
-                                dynamicContainers.appendChild(container);
-                            }
+            const clickedValue = event.target.value;
+            const columnNumber = currentData.columnNumber;
+            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
+                .then(response => response.json())
+                .then(data => {
+                    const dynamicContainer = document.getElementById(`dynamicContainer${columnNumber}`);
+                    dynamicContainer.innerHTML = '';
+                    for (let key in data) {
+                        if (
+                            key !== "id" &&
+                            key !== "name" &&
+                            key !== "icon" &&
+                            key !== "image" &&
+                            key !== "backgroundImage"
+                        ) {
+                            const container = createExpandableContainer(
+                                key,
+                                data[key],
+                                data.icon
+                            );
+                            dynamicContainer.appendChild(container);
                         }
-                        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
-                        document.getElementById('Image').src = data.image;
+                    }
+                    document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+                    document.getElementById('Image').src = data.image;
 
-                        document.querySelectorAll('.expandable-container').forEach(container => {
-                            container.addEventListener('click', () => {
-                                container.classList.toggle('open');
-                            });
+                    document.querySelectorAll('.expandable-container').forEach(container => {
+                        container.addEventListener('click', () => {
+                            container.classList.toggle('open');
                         });
+                    });
 
-                        document.querySelector(
-                            '.top-container'
-                        ).style.backgroundImage = `url(${data.backgroundImage})`;
-                    })
-                    .catch(error =>
-                        console.error('Error fetching the JSON data:', error)
-                    );
-            }
+                    document.querySelector(
+                        '.top-container'
+                    ).style.backgroundImage = `url(${data.backgroundImage})`;
+                })
+                .catch(error =>
+                    console.error('Error fetching the JSON data:', error)
+                );
         }
 
-        const data = {
-            "_ID": "123456",
-            "type": "User",
-            "id": "U12345",
-            "firstName": "John",
-            "lastName": "Doe",
-            "description": "A passionate event organizer and resource sharer.",
-            "icon": "https://i.imgur.com/YTFyCYO.jpg",
-            "image": "https://i.imgur.com/H1jOpkr.png",
-            "backgroundImage": "https://i.imgur.com/SStItzF.png",
-            // Add more data properties as needed
+        // Assign column number to data when a value is double-clicked
+        function assignColumnNumber(columnNumber) {
+            return () => {
+                currentData = { columnNumber };
+            };
+        }
+
+        // Create your data objects here, each with its own JSON file
+        // Example data objects:
+        const data1 = {
+            jsonFileName: "data1"
         };
 
-        document.getElementById('Image').src = data.image;
-        document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+        const data2 = {
+            jsonFileName: "data2"
+        };
 
-        // Create expandable containers for each column
-        for (let i = 1; i <= 3; i++) {
-            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-            for (let key in data) {
-                if (
-                    key !== "id" &&
-                    key !== "name" &&
-                    key !== "icon" &&
-                    key !== "image" &&
-                    key !== "backgroundImage"
-                ) {
-                    const container = createExpandableContainer(
-                        key,
-                        data[key],
-                        data.icon
-                    );
-                    dynamicContainers.appendChild(container);
-                }
-            }
-        }
+        const data3 = {
+            jsonFileName: "data3"
+        };
+
+        // Assign data objects to columns
+        const dynamicContainers1 = document.getElementById('dynamicContainer1');
+        dynamicContainers1.addEventListener('dblclick', assignColumnNumber(1));
+
+        const dynamicContainers2 = document.getElementById('dynamicContainer2');
+        dynamicContainers2.addEventListener('dblclick', assignColumnNumber(2));
+
+        const dynamicContainers3 = document.getElementById('dynamicContainer3');
+        dynamicContainers3.addEventListener('dblclick', assignColumnNumber(3));
     </script>
 </body>
 
