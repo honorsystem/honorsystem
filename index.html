@@ -217,7 +217,7 @@
         function handleDoubleClick(event) {
             if (currentData) {
                 const clickedValue = event.target.value;
-                fetch(`https://raw.githubusercontent.com/yourusername/yourrepository/branch/${clickedValue}.json`)
+                fetch(`https://raw.githubusercontent.com/honorsystem/honorsystem/main/${clickedValue}.json`)
                     .then(response => response.json())
                     .then(jsonData => {
                         data[clickedValue] = jsonData; // Store the fetched data in the data object
