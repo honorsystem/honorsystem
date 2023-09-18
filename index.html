@@ -214,10 +214,19 @@
         return container;
     }
 
+    fetch('https://raw.githubusercontent.com/honorsystem/honorsystem/main/data.json')
+    .then(response => response.json())
+    .then(jsonData => {
+        updateUIWithData(jsonData); // Update the UI with the initial data
+    })
+    .catch(error =>
+        console.error('Error fetching the JSON data:', error)
+    );
+    
     function handleDoubleClick(event) {
         if (currentData) {
             const clickedValue = event.target.value;
-            fetch('https://honorsystem.github.io/honorsystem/data.json')
+            fetch('https://raw.githubusercontent.com/honorsystem/honorsystem/main/data.json')
                 .then(response => response.json())
                 .then(jsonData => {
                     data = jsonData; // Store the fetched data in the data object
