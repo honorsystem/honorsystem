@@ -12,18 +12,18 @@
             padding: 20px;
             color: #333;
         }
+
         .container {
             display: flex;
-            justify-content: space-between;
             gap: 20px;
         }
-        
+
         .column {
             flex: 1;
             display: flex;
             flex-direction: column;
         }
-        
+
         .expandable-container {
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -31,7 +31,7 @@
             max-height: 100px; /* Set a fixed initial max-height */
             transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
         }
-        
+
         .expandable-container.open {
             max-height: 500px; /* Set max-height when expanded */
         }
@@ -108,8 +108,16 @@
         <img id="Image" src="https://i.imgur.com/H1jOpkr.png" alt="Image">
     </div>
 
-    <div class="container" id="dynamicContainers">
-        <!-- The expandable containers will be dynamically generated here -->
+    <div class="container">
+        <div class="column" id="dynamicContainer1">
+            <!-- The expandable containers for column 1 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer2">
+            <!-- The expandable containers for column 2 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer3">
+            <!-- The expandable containers for column 3 will be dynamically generated here -->
+        </div>
     </div>
 
     <script>
@@ -224,7 +232,7 @@
                     }
                     document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
                     document.getElementById('Image').src = data.image;
-                    
+
                     document.querySelectorAll('.expandable-container').forEach(container => {
                         container.addEventListener('click', () => {
                             container.classList.toggle('open');
@@ -252,7 +260,6 @@
             "image": "https://i.imgur.com/H1jOpkr.png",
             "backgroundImage": "https://i.imgur.com/SStItzF.png",
             "allies": ["U12346", "U12347"],
-            "aliases": ["scuba joe", "bob jones"],
             "items": ["Item1", "Item2"],
             "address": "123 Main St, City, Country",
             "liveLocation": "City Central Park",
@@ -273,27 +280,25 @@
 
         document.getElementById('Image').src = data.image;
         document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
-        document.querySelectorAll('.expandable-container').forEach(container => {
-            container.addEventListener('click', () => {
-                container.classList.toggle('open');
-            });
-        });
 
-        const dynamicContainers = document.getElementById('dynamicContainers');
-        for (let key in data) {
-            if (
-                key !== "id" &&
-                key !== "name" &&
-                key !== "icon" &&
-                key !== "image" &&
-                key !== "backgroundImage"
-            ) {
-                const container = createExpandableContainer(
-                    key,
-                    data[key],
-                    data.icon
-                );
-                dynamicContainers.appendChild(container);
+        // Create expandable containers for each column
+        for (let i = 1; i <= 3; i++) {
+            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
+            for (let key in data) {
+                if (
+                    key !== "id" &&
+                    key !== "name" &&
+                    key !== "icon" &&
+                    key !== "image" &&
+                    key !== "backgroundImage"
+                ) {
+                    const container = createExpandableContainer(
+                        key,
+                        data[key],
+                        data.icon
+                    );
+                    dynamicContainers.appendChild(container);
+                }
             }
         }
     </script>
