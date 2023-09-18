@@ -121,8 +121,13 @@
     </div>
 
     <script>
-        let currentData = null;
-        let data = {}; // Initialize an empty object for data
+        let currentData1 = null;
+        let currentData2 = null;
+        let currentData3 = null;
+        
+        let data1 = {}; // Initialize an empty object for column 1 data
+        let data2 = {}; // Initialize an empty object for column 2 data
+        let data3 = {}; // Initialize an empty object for column 3 data
 
         function toggleExpand(element) {
             const content = element.nextElementSibling;
@@ -134,9 +139,9 @@
             }
         }
 
-        function saveField(fieldId) {
+        function saveField(fieldId, columnIndex) {
             const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
+            console.log(`Saved ${fieldId} in column ${columnIndex}: ${fieldValue}`);
         }
 
         function addToFieldFromDropdown(dropdown, fieldId) {
@@ -149,10 +154,29 @@
             }
         }
 
-        function handleDoubleClick(event) {
+        function handleDoubleClick(event, columnIndex) {
+            let currentData, data;
+            
+            switch (columnIndex) {
+                case 1:
+                    currentData = currentData1;
+                    data = data1;
+                    break;
+                case 2:
+                    currentData = currentData2;
+                    data = data2;
+                    break;
+                case 3:
+                    currentData = currentData3;
+                    data = data3;
+                    break;
+                default:
+                    break;
+            }
+
             if (currentData) {
                 const clickedValue = event.target.value;
-                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+                const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
 
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
@@ -164,15 +188,15 @@
                     })
                     .then(jsonData => {
                         data = jsonData; // Store the fetched data in the data object
-                        updateUIWithData(data);
+                        updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
-                        console.error('Error fetching or processing the JSON data:', error)
+                        console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
                     );
             }
         }
 
-        function createExpandableContainer(key, value, iconUrl) {
+        function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
@@ -183,7 +207,19 @@
             header.appendChild(document.createTextNode(key));
             header.onclick = () => {
                 toggleExpand(header);
-                currentData = { key, value, iconUrl };
+                switch (columnIndex) {
+                    case 1:
+                        currentData1 = { key, value, iconUrl };
+                        break;
+                    case 2:
+                        currentData2 = { key, value, iconUrl };
+                        break;
+                    case 3:
+                        currentData3 = { key, value, iconUrl };
+                        break;
+                    default:
+                        break;
+                }
             };
 
             const content = document.createElement('div');
@@ -209,7 +245,7 @@
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
-                input.addEventListener('dblclick', handleDoubleClick);
+                input.addEventListener('dblclick', (event) => handleDoubleClick(event, columnIndex));
                 content.appendChild(input);
             } else if (key === 'website') {
                 const iframe = document.createElement('iframe');
@@ -222,13 +258,13 @@
                 input.type = 'text';
                 input.id = key;
                 input.value = value;
-                input.addEventListener('dblclick', handleDoubleClick);
+                input.addEventListener('dblclick', (event) => handleDoubleClick(event, columnIndex));
                 content.appendChild(input);
             }
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
+            saveButton.onclick = () => saveField(key, columnIndex);
             content.appendChild(saveButton);
 
             container.appendChild(header);
@@ -237,24 +273,77 @@
             return container;
         }
 
-        function updateUIWithData(jsonData) {
-            // Populate data into the Name and Image elements
-            document.getElementById('Name').textContent = `${jsonData.firstName} ${jsonData.lastName}`;
-            document.getElementById('Image').src = jsonData.image;
+        function updateUIWithData(jsonData, columnIndex) {
+            let dynamicContainers;
+            
+            switch (columnIndex) {
+                case 1:
+                    dynamicContainers = document.getElementById('dynamicContainer1');
+                    break;
+                case 2:
+                    dynamicContainers = document.getElementById('dynamicContainer2');
+                    break;
+                case 3:
+                    dynamicContainers = document.getElementById('dynamicContainer3');
+                    break;
+                default:
+                    break;
+            }
+            
+            // Clear existing containers
+            dynamicContainers.innerHTML = '';
+
+            // Create expandable containers for the specific column
+            for (let key in jsonData) {
+                if (
+                    key !== "id" &&
+                    key !== "name" &&
+                    key !== "icon" &&
+                    key !== "image" &&
+                    key !== "backgroundImage"
+                ) {
+                    const container = createExpandableContainer(
+                        key,
+                        jsonData[key],
+                        jsonData.icon,
+                        columnIndex
+                    );
+                    dynamicContainers.appendChild(container);
+                }
+            }
         }
 
-        // Fetch initial JSON data from a relative path (you can update the file name)
-        fetch('./data.json')
+        // Fetch initial JSON data for each column from relative paths
+        fetch('./data1.json')
             .then(response => response.json())
             .then(jsonData => {
-                data = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data); // Update the UI with the initial data
+                data1 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data1, 1); // Update the UI with the initial data for column 1
             })
             .catch(error =>
-                console.error('Error fetching the JSON data:', error)
+                console.error('Error fetching the JSON data for column 1:', error)
+            );
+
+        fetch('./data2.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data2 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data2, 2); // Update the UI with the initial data for column 2
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data for column 2:', error)
+            );
+
+        fetch('./data3.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data3 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data3, 3); // Update the UI with the initial data for column 3
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data for column 3:', error)
             );
     </script>
-
 </body>
 
 </html>
