@@ -13,20 +13,21 @@
             color: #333;
         }
         .container {
-            display: flex;
-            flex-wrap: wrap; /* Allow containers to wrap to the next row */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            justify-content: space-between;
-            align-items: flex-start;
         }
-
+        
         .expandable-container {
-            width: calc(33.33% - 20px); /* Set a fixed width for each container */
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin-bottom: 20px;
             overflow-y: auto;
             max-height: 300px;
+            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
+        }
+        
+        .expandable-container.open {
+            max-height: none; /* Set max-height to none when expanded */
         }
 
         .top-container {
@@ -259,6 +260,11 @@
 
         document.getElementById('Image').src = data.image;
         document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
+        document.querySelectorAll('.expandable-container').forEach(container => {
+            container.addEventListener('click', () => {
+                container.classList.toggle('open');
+            });
+        });
 
         const dynamicContainers = document.getElementById('dynamicContainers');
         for (let key in data) {
