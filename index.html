@@ -121,6 +121,8 @@
     </div>
 
     <script>
+        let currentData = null;
+
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
@@ -155,7 +157,10 @@
             icon.src = iconUrl;
             header.appendChild(icon);
             header.appendChild(document.createTextNode(key));
-            header.onclick = () => toggleExpand(header);
+            header.onclick = () => {
+                toggleExpand(header);
+                currentData = { key, value, iconUrl };
+            };
 
             const content = document.createElement('div');
             content.className = 'expandable-content';
@@ -209,45 +214,46 @@
         }
 
         function handleDoubleClick(event) {
-            const clickedValue = event.target.value;
-            fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('dynamicContainers').innerHTML = '';
-                    for (let key in data) {
-                        if (
-                            key !== "id" &&
-                            key !== "name" &&
-                            key !== "icon" &&
-                            key !== "image" &&
-                            key !== "backgroundImage"
-                        ) {
-                            const container = createExpandableContainer(
-                                key,
-                                data[key],
-                                data.icon
-                            );
-                            dynamicContainers.appendChild(container);
+            if (currentData) {
+                const clickedValue = event.target.value;
+                fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('dynamicContainers').innerHTML = '';
+                        for (let key in data) {
+                            if (
+                                key !== "id" &&
+                                key !== "name" &&
+                                key !== "icon" &&
+                                key !== "image" &&
+                                key !== "backgroundImage"
+                            ) {
+                                const container = createExpandableContainer(
+                                    key,
+                                    data[key],
+                                    data.icon
+                                );
+                                dynamicContainers.appendChild(container);
+                            }
                         }
-                    }
-                    document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
-                    document.getElementById('Image').src = data.image;
+                        document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
+                        document.getElementById('Image').src = data.image;
 
-                    document.querySelectorAll('.expandable-container').forEach(container => {
-                        container.addEventListener('click', () => {
-                            container.classList.toggle('open');
+                        document.querySelectorAll('.expandable-container').forEach(container => {
+                            container.addEventListener('click', () => {
+                                container.classList.toggle('open');
+                            });
                         });
-                    });
 
-                    document.querySelector(
-                        '.top-container'
-                    ).style.backgroundImage = `url(${data.backgroundImage})`;
-                })
-                .catch(error =>
-                    console.error('Error fetching the JSON data:', error)
-                );
+                        document.querySelector(
+                            '.top-container'
+                        ).style.backgroundImage = `url(${data.backgroundImage})`;
+                    })
+                    .catch(error =>
+                        console.error('Error fetching the JSON data:', error)
+                    );
+            }
         }
-
 
         const data = {
             "_ID": "123456",
@@ -260,6 +266,7 @@
             "image": "https://i.imgur.com/H1jOpkr.png",
             "backgroundImage": "https://i.imgur.com/SStItzF.png",
             "allies": ["U12346", "U12347"],
+            "aliases": ["scuba joe", "bob jones"],
             "items": ["Item1", "Item2"],
             "address": "123 Main St, City, Country",
             "liveLocation": "City Central Park",
