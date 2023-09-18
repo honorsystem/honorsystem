@@ -22,7 +22,7 @@
         }
 
         .expandable-container {
-            flex: 0 1 calc(33.33% - 20px);
+            flex: 1;
             border: 1px solid #ccc;
             border-radius: 5px;
             margin-bottom: 20px;
@@ -112,7 +112,6 @@
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
-                element.parentElement.style.maxHeight = "500px"; // or whatever maximum height you want for expanded containers
             } else {
                 content.style.display = "none";
                 element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
