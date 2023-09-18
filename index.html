@@ -109,8 +109,14 @@
     </div>
 
     <div class="container">
-        <div class="column" id="dynamicContainer">
-            <!-- The expandable containers will be dynamically generated here -->
+        <div class="column" id="dynamicContainer1">
+            <!-- The expandable containers for column 1 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer2">
+            <!-- The expandable containers for column 2 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer3">
+            <!-- The expandable containers for column 3 will be dynamically generated here -->
         </div>
     </div>
 
@@ -213,7 +219,7 @@
                 fetch(`https://honorsystem.github.io/honorsystem/${clickedValue}.json`)
                     .then(response => response.json())
                     .then(data => {
-                        document.getElementById('dynamicContainer').innerHTML = '';
+                        document.getElementById('dynamicContainers').innerHTML = '';
                         for (let key in data) {
                             if (
                                 key !== "id" &&
@@ -227,7 +233,7 @@
                                     data[key],
                                     data.icon
                                 );
-                                dynamicContainer.appendChild(container);
+                                dynamicContainers.appendChild(container);
                             }
                         }
                         document.getElementById('Name').innerText = `${data.firstName} ${data.lastName}`;
@@ -282,22 +288,24 @@
         document.getElementById('Image').src = data.image;
         document.querySelector('.top-container').style.backgroundImage = `url(${data.backgroundImage})`;
 
-        // Create expandable containers
-        const dynamicContainer = document.getElementById('dynamicContainer');
-        for (let key in data) {
-            if (
-                key !== "id" &&
-                key !== "name" &&
-                key !== "icon" &&
-                key !== "image" &&
-                key !== "backgroundImage"
-            ) {
-                const container = createExpandableContainer(
-                    key,
-                    data[key],
-                    data.icon
-                );
-                dynamicContainer.appendChild(container);
+        // Create expandable containers for each column
+        for (let i = 1; i <= 3; i++) {
+            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
+            for (let key in data) {
+                if (
+                    key !== "id" &&
+                    key !== "name" &&
+                    key !== "icon" &&
+                    key !== "image" &&
+                    key !== "backgroundImage"
+                ) {
+                    const container = createExpandableContainer(
+                        key,
+                        data[key],
+                        data.icon
+                    );
+                    dynamicContainers.appendChild(container);
+                }
             }
         }
     </script>
