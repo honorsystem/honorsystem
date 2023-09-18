@@ -247,36 +247,12 @@
             );
 
         function updateUIWithData(jsonData) {
-            // Clear existing containers
-            document.getElementById('dynamicContainer1').innerHTML = '';
-            document.getElementById('dynamicContainer2').innerHTML = '';
-            document.getElementById('dynamicContainer3').innerHTML = '';
-
-            // Populate data into your HTML elements
-            document.getElementById('Name').innerText = `${jsonData.firstName} ${jsonData.lastName}`;
+            // Populate data into the Name and Image elements
+            document.getElementById('Name').textContent = `${jsonData.firstName} ${jsonData.lastName}`;
             document.getElementById('Image').src = jsonData.image;
-
-            // Create expandable containers for each column
-            for (let i = 1; i <= 3; i++) {
-                const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-                for (let key in jsonData) {
-                    if (
-                        key !== "id" &&
-                        key !== "name" &&
-                        key !== "icon" &&
-                        key !== "image" &&
-                        key !== "backgroundImage"
-                    ) {
-                        const container = createExpandableContainer(
-                            key,
-                            jsonData[key],
-                            jsonData.icon
-                        );
-                        dynamicContainers.appendChild(container);
-                    }
-                }
-            }
         }
+
+
 
     </script>
 
