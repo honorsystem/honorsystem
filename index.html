@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON editor</title>
+    <title>JSON Editor</title>
     <style>
         /* Your CSS styles here */
     </style>
@@ -21,27 +21,20 @@
     </div>
 
     <script>
-        let currentData = null;
-
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
                 content.style.display = "block";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "auto";
             }
         }
 
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
-
-            if (currentData) {
-                currentData.value = fieldValue;
-                updateDataOnGitHub(currentData.key, fieldValue);
-            }
-
             console.log(`Saved ${fieldId}: ${fieldValue}`);
+
+            // Add logic to update the field in the data.json file on GitHub here
         }
 
         function createExpandableContainer(key, value) {
@@ -52,7 +45,6 @@
             header.appendChild(document.createTextNode(key));
             header.onclick = () => {
                 toggleExpand(header);
-                currentData = { key, value };
             };
 
             const content = document.createElement('div');
@@ -76,7 +68,7 @@
         }
 
         function fetchGitHubData() {
-            const accessToken = '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'; // Replace with your actual access token
+            const accessToken = 'YOUR_GITHUB_PAT'; // Replace with your actual access token
             const apiUrl = 'https://raw.githubusercontent.com/honorsystem/honorsystem/main/data.json';
 
             fetch(apiUrl, {
@@ -97,52 +89,6 @@
             })
             .catch(error =>
                 console.error('Error fetching the JSON data:', error)
-            );
-        }
-
-        function updateDataOnGitHub(fileName, newValue) {
-            const accessToken = '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'; // Replace with your actual access token
-            const apiUrl = `https://api.github.com/repos/honorsystem/honorsystem/contents/data.json`;
-
-            fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `token ${accessToken}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                data.content = btoa(JSON.stringify({ ...JSON.parse(atob(data.content)), [fileName]: newValue }));
-
-                const updateRequest = {
-                    message: `Update ${fileName} field in data.json`,
-                    content: data.content,
-                    sha: data.sha,
-                };
-
-                fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${accessToken}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(updateRequest),
-                })
-                .then(response => {
-                    if (response.status === 200) {
-                        console.log(`Successfully updated ${fileName} field on GitHub.`);
-                    } else {
-                        console.error('Error updating the field on GitHub:', response.statusText);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating the field on GitHub:', error);
-                });
-            })
-            .catch(error =>
-                console.error('Error fetching data.json from GitHub:', error)
             );
         }
 
