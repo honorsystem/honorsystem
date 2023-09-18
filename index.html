@@ -148,6 +148,7 @@
                 document.getElementById(fieldId).value = selectedValue;
             }
         }
+
         function handleDoubleClick(event) {
             if (currentData) {
                 const clickedValue = event.target.value;
@@ -235,7 +236,8 @@
 
             return container;
         }
-        
+
+        // Fetch initial JSON data from a relative path (you can update the file name)
         fetch('./data.json')
             .then(response => response.json())
             .then(jsonData => {
@@ -252,10 +254,7 @@
             document.getElementById('Image').src = jsonData.image;
         }
 
-
-
     </script>
-
 </body>
 
 </html>
