@@ -13,21 +13,31 @@
             color: #333;
         }
         .container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
             gap: 20px;
+        }
+        
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            flex-basis: calc(33.33% - 20px); /* Each column takes 33.33% of the available width */
         }
         
         .expandable-container {
             border: 1px solid #ccc;
             border-radius: 5px;
+            margin-bottom: 20px;
             overflow-y: auto;
-            max-height: 300px;
+            max-height: 100px; /* Set a fixed initial max-height */
             transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
         }
         
         .expandable-container.open {
-            max-height: none; /* Set max-height to none when expanded */
+            max-height: 300px; /* Set max-height when expanded */
         }
 
         .top-container {
