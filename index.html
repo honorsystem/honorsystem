@@ -123,7 +123,7 @@
     <script>
         let currentData = null;
         let data = {}; // Initialize an empty object for data
-
+    
         function toggleExpand(element) {
             const content = element.nextElementSibling;
             if (content.style.display === "none" || content.style.display === "") {
@@ -133,12 +133,12 @@
                 element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
             }
         }
-
+    
         function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
             console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
-
+    
         function addToFieldFromDropdown(dropdown, fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
             const selectedValue = dropdown.value;
@@ -148,11 +148,11 @@
                 document.getElementById(fieldId).value = selectedValue;
             }
         }
-
+    
         function createExpandableContainer(key, value, iconUrl) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
-
+    
             const header = document.createElement('h2');
             const icon = document.createElement('img');
             icon.src = iconUrl;
@@ -162,10 +162,10 @@
                 toggleExpand(header);
                 currentData = { key, value, iconUrl };
             };
-
+    
             const content = document.createElement('div');
             content.className = 'expandable-content';
-
+    
             if (key === 'liveLocation') {
                 const iframe = document.createElement('iframe');
                 iframe.src = 'https://earth.google.com/web/';
@@ -182,7 +182,7 @@
                 });
                 dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
                 content.appendChild(dropdown);
-
+    
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
@@ -202,43 +202,43 @@
                 input.addEventListener('dblclick', handleDoubleClick);
                 content.appendChild(input);
             }
-
+    
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
             saveButton.onclick = () => saveField(key);
             content.appendChild(saveButton);
-
+    
             container.appendChild(header);
             container.appendChild(content);
-
+    
             return container;
         }
-
+    
         function handleDoubleClick(event) {
             if (currentData) {
                 const clickedValue = event.target.value;
-                fetch(`https://raw.githubusercontent.com/honorsystem/honorsystem/main/${clickedValue}.json`)
+                fetch('https://github.com/honorsystem/honorsystem/raw/main/data.json')
                     .then(response => response.json())
                     .then(jsonData => {
-                        data[clickedValue] = jsonData; // Store the fetched data in the data object
-                        updateUIWithData(jsonData);
+                        data = jsonData; // Store the fetched data in the data object
+                        updateUIWithData(data[clickedValue]);
                     })
                     .catch(error =>
                         console.error('Error fetching the JSON data:', error)
                     );
             }
         }
-
+    
         function updateUIWithData(jsonData) {
             // Clear existing containers
             document.getElementById('dynamicContainer1').innerHTML = '';
             document.getElementById('dynamicContainer2').innerHTML = '';
             document.getElementById('dynamicContainer3').innerHTML = '';
-
+    
             // Populate data into your HTML elements
             document.getElementById('Name').innerText = `${jsonData.firstName} ${jsonData.lastName}`;
             document.getElementById('Image').src = jsonData.image;
-
+    
             // Create expandable containers for each column
             for (let i = 1; i <= 3; i++) {
                 const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
@@ -260,12 +260,20 @@
                 }
             }
         }
-
-        // Your initial data here
-        // data object should be empty initially
-        // data = {};
-
+    
+        // Initial fetch of data
+        fetch('https://github.com/honorsystem/honorsystem/raw/main/data.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data); // Update the UI with the initial data
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data:', error)
+            );
+    
     </script>
+
 </body>
 
 </html>
