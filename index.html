@@ -6,105 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON editor</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f4f4f4;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            gap: 20px;
-        }
-
-        .column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .expandable-container {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            overflow-y: auto;
-            max-height: 100px; /* Set a fixed initial max-height */
-            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
-        }
-
-        .expandable-container.open {
-            max-height: 500px; /* Set max-height when expanded */
-        }
-
-        .top-container {
-            width: 100%;
-            height: 250px;
-            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
-            background-size: cover;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .expandable-container h2 {
-            margin: 0;
-            padding: 10px;
-            background: #e7e7e7;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .expandable-container h2 img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .expandable-content {
-            padding: 10px;
-            display: none;
-        }
-
-        select,
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 5px 10px;
-            background: #333;
-            border: none;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background: #555;
-        }
-
-        .column-heading {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+        /* Your existing CSS styles here */
     </style>
 </head>
 
@@ -139,7 +41,7 @@
         let currentData1 = null;
         let currentData2 = null;
         let currentData3 = null;
-        
+
         let data1 = {}; // Initialize an empty object for column 1 data
         let data2 = {}; // Initialize an empty object for column 2 data
         let data3 = {}; // Initialize an empty object for column 3 data
@@ -171,7 +73,7 @@
 
         function handleDoubleClick(event, columnIndex) {
             let currentData, data;
-        
+
             switch (columnIndex) {
                 case 1:
                     currentData = currentData1;
@@ -188,11 +90,11 @@
                 default:
                     break;
             }
-        
+
             if (currentData) {
                 const clickedValue = event.target.value;
                 const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-        
+
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
                     .then(response => {
@@ -211,7 +113,6 @@
                     );
             }
         }
-
 
         function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
@@ -292,7 +193,7 @@
 
         function updateUIWithData(jsonData, columnIndex) {
             let dynamicContainers;
-            
+
             switch (columnIndex) {
                 case 1:
                     dynamicContainers = document.getElementById('dynamicContainer1');
@@ -306,7 +207,7 @@
                 default:
                     break;
             }
-            
+
             // Clear existing containers
             dynamicContainers.innerHTML = '';
 
@@ -330,36 +231,48 @@
             }
         }
 
-        // Fetch initial JSON data for each column from relative paths
-        fetch('./data1.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data1 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data1, 1); // Update the UI with the initial data for column 1
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 1:', error)
-            );
+        // Function to set column name and update data
+        function setColumnNameAndData(name, columnIndex) {
+            // Set the column name
+            document.getElementById('Name').textContent = name;
+            
+            // Fetch initial JSON data for the selected column from the relative path
+            fetch(`./data${columnIndex}.json`)
+                .then(response => response.json())
+                .then(jsonData => {
+                    // Store the fetched data in the corresponding data object
+                    switch (columnIndex) {
+                        case 1:
+                            data1 = jsonData;
+                            updateUIWithData(data1, columnIndex);
+                            break;
+                        case 2:
+                            data2 = jsonData;
+                            updateUIWithData(data2, columnIndex);
+                            break;
+                        case 3:
+                            data3 = jsonData;
+                            updateUIWithData(data3, columnIndex);
+                            break;
+                        default:
+                            break;
+                    }
+                })
+                .catch(error =>
+                    console.error(`Error fetching the JSON data for column ${columnIndex}:`, error)
+                );
+        }
 
-        fetch('./data2.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data2 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data2, 2); // Update the UI with the initial data for column 2
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 2:', error)
-            );
+        // Initial setup for column 1
+        setColumnNameAndData("Column 1", 1);
 
-        fetch('./data3.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data3 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data3, 3); // Update the UI with the initial data for column 3
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 3:', error)
-            );
+        // Event listener for column selection dropdown
+        const columnSelectionDropdown = document.getElementById('columnSelection');
+        columnSelectionDropdown.addEventListener('change', (event) => {
+            const selectedColumnIndex = parseInt(event.target.value);
+            const selectedColumnName = `Column ${selectedColumnIndex}`;
+            setColumnNameAndData(selectedColumnName, selectedColumnIndex);
+        });
     </script>
 </body>
 
