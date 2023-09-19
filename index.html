@@ -151,6 +151,16 @@
             }
         }
 
+        let currentData1 = null;
+        let currentData2 = null;
+        let currentData3 = null;
+        
+        let data1 = {}; // Initialize an empty object for column 1 data
+        let data2 = {}; // Initialize an empty object for column 2 data
+        let data3 = {}; // Initialize an empty object for column 3 data
+        
+        // Rest of your code...
+        
         function handleDoubleClick(event, columnIndex) {
             let currentData, data;
         
@@ -170,6 +180,30 @@
                 default:
                     break;
             }
+        
+            if (currentData) {
+                const clickedValue = event.target.value;
+                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+        
+                // Fetch JSON data from the relative path
+                fetch(jsonUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(jsonData => {
+                        // Update the specific data object for the column
+                        data[currentData.key] = jsonData[currentData.key];
+                        // Update the UI with the new data for the specific column
+                        updateUIWithData(data, columnIndex);
+                    })
+                    .catch(error =>
+                        console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
+                    );
+            }
+        }
         
             if (currentData) {
                 const clickedValue = event.target.value;
