@@ -107,6 +107,7 @@
         <h1 id="Name"></h1>
         <img id="Image" src="" alt="Image">
     </div>
+
     <div class="container">
         <div class="column" id="dynamicContainer1">
             <!-- The "name" field will appear here -->
@@ -122,11 +123,8 @@
         </div>
     </div>
 
-
-
     <script>
-        let currentData = null;
-        let data = {}; // Initialize an empty object for data
+        const data = {}; // Initialize an empty object for data
 
         function toggleExpand(element) {
             const content = element.nextElementSibling;
@@ -138,9 +136,9 @@
             }
         }
 
-        function saveField(fieldId) {
+        function saveField(fieldId, columnIndex) {
             const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
+            console.log(`Saved ${fieldId} in column ${columnIndex}: ${fieldValue}`);
         }
 
         function addToFieldFromDropdown(dropdown, fieldId) {
@@ -241,10 +239,10 @@
 
             return container;
         }
-        
+
         function updateUIWithData(jsonData, columnIndex) {
             let dynamicContainers;
-        
+
             switch (columnIndex) {
                 case 1:
                     dynamicContainers = document.getElementById('dynamicContainer1');
@@ -258,10 +256,10 @@
                 default:
                     break;
             }
-        
+
             // Clear existing containers
             dynamicContainers.innerHTML = '';
-        
+
             // Create expandable containers for the fields excluding "name"
             for (let key in jsonData) {
                 if (
@@ -280,23 +278,20 @@
                     dynamicContainers.appendChild(container);
                 }
             }
-        
+
             // Display "name" at the top of the column
             const nameElement = document.createElement('h2');
             nameElement.innerText = jsonData.name;
             dynamicContainers.insertBefore(nameElement, dynamicContainers.firstChild);
         }
 
-
-
-
         // Fetch initial JSON data for each column and populate the UI
         for (let i = 1; i <= 3; i++) {
             fetch(`./data${i}.json`)
                 .then(response => response.json())
                 .then(jsonData => {
-                    data[`data${i}`] = jsonData; // Store the fetched data in the data object
-                    updateUIWithData(data, i); // Update the UI with the initial data for the specific column
+                    data[`data${i}`] = jsonData; // Store the fetched data in the specific data object for the column
+                    updateUIWithData(data[`data${i}`], i); // Update the UI with the initial data for the specific column
                 })
                 .catch(error =>
                     console.error(`Error fetching or processing data for column ${i}:`, error)
