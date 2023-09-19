@@ -259,15 +259,10 @@
                     break;
             }
         
-            // Clear existing containers and "name" field
+            // Clear existing containers
             dynamicContainers.innerHTML = '';
         
-            // Display "name" at the top of the column
-            const nameElement = document.createElement('h2');
-            nameElement.innerText = jsonData.name;
-            dynamicContainers.appendChild(nameElement);
-        
-            // Create expandable containers for the remaining fields
+            // Create expandable containers for the fields excluding "name"
             for (let key in jsonData) {
                 if (
                     key !== "id" &&
@@ -285,7 +280,13 @@
                     dynamicContainers.appendChild(container);
                 }
             }
+        
+            // Display "name" at the top of the column
+            const nameElement = document.createElement('h2');
+            nameElement.innerText = jsonData.name;
+            dynamicContainers.insertBefore(nameElement, dynamicContainers.firstChild);
         }
+
 
 
 
