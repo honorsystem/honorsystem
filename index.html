@@ -152,10 +152,29 @@
         }
 
         function handleDoubleClick(event, columnIndex) {
+            let currentData, data;
+        
+            switch (columnIndex) {
+                case 1:
+                    currentData = currentData1;
+                    data = data1;
+                    break;
+                case 2:
+                    currentData = currentData2;
+                    data = data2;
+                    break;
+                case 3:
+                    currentData = currentData3;
+                    data = data3;
+                    break;
+                default:
+                    break;
+            }
+        
             if (currentData) {
                 const clickedValue = event.target.value;
                 const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-
+        
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
                     .then(response => {
@@ -165,8 +184,9 @@
                         return response.json();
                     })
                     .then(jsonData => {
-                        // Store the fetched data in the specific data object for the column
-                        data[`data${columnIndex}`] = jsonData;
+                        // Update the specific data object for the column
+                        data[currentData.key] = jsonData[currentData.key];
+                        // Update the UI with the new data for the specific column
                         updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
