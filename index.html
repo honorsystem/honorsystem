@@ -103,24 +103,21 @@
 </head>
 
 <body>
-    <div class="top-container">
-        <h1 id="Name"></h1>
-        <img id="Image" src="" alt="Image">
+    <div class="container">
+        <div class="column" id="dynamicContainer1">
+            <!-- The "name" field will appear here -->
+            <!-- The expandable containers for column 1 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer2">
+            <!-- The "name" field will appear here -->
+            <!-- The expandable containers for column 2 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer3">
+            <!-- The "name" field will appear here -->
+            <!-- The expandable containers for column 3 will be dynamically generated here -->
+        </div>
     </div>
-<div class="container">
-    <div class="column" id="dynamicContainer1">
-        <div class="name-container"></div>
-        <!-- The expandable containers for column 1 will be dynamically generated here -->
-    </div>
-    <div class="column" id="dynamicContainer2">
-        <div class="name-container"></div>
-        <!-- The expandable containers for column 2 will be dynamically generated here -->
-    </div>
-    <div class="column" id="dynamicContainer3">
-        <div class="name-container"></div>
-        <!-- The expandable containers for column 3 will be dynamically generated here -->
-    </div>
-</div>
+
 
 
     <script>
@@ -240,31 +237,31 @@
 
             return container;
         }
-
+        
         function updateUIWithData(jsonData, columnIndex) {
-            let nameContainer;
+            let dynamicContainers;
         
             switch (columnIndex) {
                 case 1:
-                    nameContainer = document.querySelector('#dynamicContainer1 .name-container');
+                    dynamicContainers = document.getElementById('dynamicContainer1');
                     break;
                 case 2:
-                    nameContainer = document.querySelector('#dynamicContainer2 .name-container');
+                    dynamicContainers = document.getElementById('dynamicContainer2');
                     break;
                 case 3:
-                    nameContainer = document.querySelector('#dynamicContainer3 .name-container');
+                    dynamicContainers = document.getElementById('dynamicContainer3');
                     break;
                 default:
                     break;
             }
         
-            // Clear existing name container
-            nameContainer.innerHTML = '';
+            // Clear existing containers and "name" field
+            dynamicContainers.innerHTML = '';
         
             // Display "name" at the top of the column
             const nameElement = document.createElement('h2');
             nameElement.innerText = jsonData.name;
-            nameContainer.appendChild(nameElement);
+            dynamicContainers.appendChild(nameElement);
         
             // Create expandable containers for the remaining fields
             for (let key in jsonData) {
@@ -281,10 +278,11 @@
                         jsonData.icon,
                         columnIndex
                     );
-                    nameContainer.appendChild(container);
+                    dynamicContainers.appendChild(container);
                 }
             }
         }
+
 
 
         // Fetch initial JSON data for each column and populate the UI
