@@ -239,12 +239,32 @@
         }
 
         function updateUIWithData(jsonData, columnIndex) {
-            // Clear existing containers for the specific column
-            const dynamicContainer = document.getElementById(`dynamicContainer${columnIndex}`);
-            dynamicContainer.innerHTML = '';
-
-            // Create expandable containers for the fetched data
-            for (let key in jsonData[`data${columnIndex}`]) {
+            let dynamicContainers;
+    
+            switch (columnIndex) {
+                case 1:
+                    dynamicContainers = document.getElementById('dynamicContainer1');
+                    break;
+                case 2:
+                    dynamicContainers = document.getElementById('dynamicContainer2');
+                    break;
+                case 3:
+                    dynamicContainers = document.getElementById('dynamicContainer3');
+                    break;
+                default:
+                    break;
+            }
+    
+            // Clear existing containers
+            dynamicContainers.innerHTML = '';
+    
+            // Display "name" at the top of the column
+            const nameElement = document.createElement('h2');
+            nameElement.innerText = jsonData.name;
+            dynamicContainers.appendChild(nameElement);
+    
+            // Create expandable containers for the remaining fields
+            for (let key in jsonData) {
                 if (
                     key !== "id" &&
                     key !== "name" &&
@@ -254,11 +274,11 @@
                 ) {
                     const container = createExpandableContainer(
                         key,
-                        jsonData[`data${columnIndex}`][key],
+                        jsonData[key],
                         jsonData.icon,
                         columnIndex
                     );
-                    dynamicContainer.appendChild(container);
+                    dynamicContainers.appendChild(container);
                 }
             }
         }
