@@ -158,9 +158,7 @@
         let data1 = {}; // Initialize an empty object for column 1 data
         let data2 = {}; // Initialize an empty object for column 2 data
         let data3 = {}; // Initialize an empty object for column 3 data
-        
-        // Rest of your code...
-        
+
         function handleDoubleClick(event, columnIndex) {
             let currentData, data;
         
@@ -194,33 +192,8 @@
                         return response.json();
                     })
                     .then(jsonData => {
-                        // Update the specific data object for the column
+                        // Store the fetched data in the specific data object for the column
                         data[currentData.key] = jsonData[currentData.key];
-                        // Update the UI with the new data for the specific column
-                        updateUIWithData(data, columnIndex);
-                    })
-                    .catch(error =>
-                        console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
-                    );
-            }
-        }
-        
-            if (currentData) {
-                const clickedValue = event.target.value;
-                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-        
-                // Fetch JSON data from the relative path
-                fetch(jsonUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Network response was not ok: ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
-                    .then(jsonData => {
-                        // Update the specific data object for the column
-                        data[currentData.key] = jsonData[currentData.key];
-                        // Update the UI with the new data for the specific column
                         updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
@@ -240,7 +213,7 @@
             header.appendChild(document.createTextNode(key));
             header.onclick = () => {
                 toggleExpand(header);
-                currentData = { key, value, iconUrl };
+                currentData1 = { key, value, iconUrl };
             };
 
             const content = document.createElement('div');
@@ -285,7 +258,7 @@
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
+            saveButton.onclick = () => saveField(key, columnIndex);
             content.appendChild(saveButton);
 
             container.appendChild(header);
