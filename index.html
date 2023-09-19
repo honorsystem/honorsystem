@@ -239,30 +239,30 @@
         }
 
         function updateUIWithData(jsonData, columnIndex) {
-            let dynamicContainers;
-    
+            let nameContainer;
+        
             switch (columnIndex) {
                 case 1:
-                    dynamicContainers = document.getElementById('dynamicContainer1');
+                    nameContainer = document.querySelector('#dynamicContainer1 .name-container');
                     break;
                 case 2:
-                    dynamicContainers = document.getElementById('dynamicContainer2');
+                    nameContainer = document.querySelector('#dynamicContainer2 .name-container');
                     break;
                 case 3:
-                    dynamicContainers = document.getElementById('dynamicContainer3');
+                    nameContainer = document.querySelector('#dynamicContainer3 .name-container');
                     break;
                 default:
                     break;
             }
-    
-            // Clear existing containers
-            dynamicContainers.innerHTML = '';
-    
+        
+            // Clear existing name container
+            nameContainer.innerHTML = '';
+        
             // Display "name" at the top of the column
             const nameElement = document.createElement('h2');
             nameElement.innerText = jsonData.name;
-            dynamicContainers.appendChild(nameElement);
-    
+            nameContainer.appendChild(nameElement);
+        
             // Create expandable containers for the remaining fields
             for (let key in jsonData) {
                 if (
@@ -278,10 +278,11 @@
                         jsonData.icon,
                         columnIndex
                     );
-                    dynamicContainers.appendChild(container);
+                    nameContainer.appendChild(container);
                 }
             }
         }
+
 
         // Fetch initial JSON data for each column and populate the UI
         for (let i = 1; i <= 3; i++) {
