@@ -121,13 +121,8 @@
     </div>
 
     <script>
-        let currentData1 = null;
-        let currentData2 = null;
-        let currentData3 = null;
-        
-        let data1 = {}; // Initialize an empty object for column 1 data
-        let data2 = {}; // Initialize an empty object for column 2 data
-        let data3 = {}; // Initialize an empty object for column 3 data
+        let currentData = null;
+        let data = {}; // Initialize an empty object for data
 
         function toggleExpand(element) {
             const content = element.nextElementSibling;
@@ -139,9 +134,9 @@
             }
         }
 
-        function saveField(fieldId, columnIndex) {
+        function saveField(fieldId) {
             const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId} in column ${columnIndex}: ${fieldValue}`);
+            console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
         function addToFieldFromDropdown(dropdown, fieldId) {
@@ -153,30 +148,12 @@
                 document.getElementById(fieldId).value = selectedValue;
             }
         }
+
         function handleDoubleClick(event, columnIndex) {
-            let currentData, data;
-        
-            switch (columnIndex) {
-                case 1:
-                    currentData = currentData1;
-                    data = data1;
-                    break;
-                case 2:
-                    currentData = currentData2;
-                    data = data2;
-                    break;
-                case 3:
-                    currentData = currentData3;
-                    data = data3;
-                    break;
-                default:
-                    break;
-            }
-        
             if (currentData) {
                 const clickedValue = event.target.value;
                 const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-        
+
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
                     .then(response => {
@@ -187,7 +164,7 @@
                     })
                     .then(jsonData => {
                         // Store the fetched data in the specific data object for the column
-                        data[currentData.key] = jsonData[currentData.key];
+                        data[`data${columnIndex}`] = jsonData;
                         updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
@@ -195,7 +172,6 @@
                     );
             }
         }
-
 
         function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
@@ -208,19 +184,7 @@
             header.appendChild(document.createTextNode(key));
             header.onclick = () => {
                 toggleExpand(header);
-                switch (columnIndex) {
-                    case 1:
-                        currentData1 = { key, value, iconUrl };
-                        break;
-                    case 2:
-                        currentData2 = { key, value, iconUrl };
-                        break;
-                    case 3:
-                        currentData3 = { key, value, iconUrl };
-                        break;
-                    default:
-                        break;
-                }
+                currentData = { key, value, iconUrl };
             };
 
             const content = document.createElement('div');
@@ -265,7 +229,7 @@
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key, columnIndex);
+            saveButton.onclick = () => saveField(key);
             content.appendChild(saveButton);
 
             container.appendChild(header);
@@ -275,27 +239,12 @@
         }
 
         function updateUIWithData(jsonData, columnIndex) {
-            let dynamicContainers;
-            
-            switch (columnIndex) {
-                case 1:
-                    dynamicContainers = document.getElementById('dynamicContainer1');
-                    break;
-                case 2:
-                    dynamicContainers = document.getElementById('dynamicContainer2');
-                    break;
-                case 3:
-                    dynamicContainers = document.getElementById('dynamicContainer3');
-                    break;
-                default:
-                    break;
-            }
-            
-            // Clear existing containers
-            dynamicContainers.innerHTML = '';
+            // Clear existing containers for the specific column
+            const dynamicContainer = document.getElementById(`dynamicContainer${columnIndex}`);
+            dynamicContainer.innerHTML = '';
 
-            // Create expandable containers for the specific column
-            for (let key in jsonData) {
+            // Create expandable containers for the fetched data
+            for (let key in jsonData[`data${columnIndex}`]) {
                 if (
                     key !== "id" &&
                     key !== "name" &&
@@ -305,45 +254,27 @@
                 ) {
                     const container = createExpandableContainer(
                         key,
-                        jsonData[key],
+                        jsonData[`data${columnIndex}`][key],
                         jsonData.icon,
                         columnIndex
                     );
-                    dynamicContainers.appendChild(container);
+                    dynamicContainer.appendChild(container);
                 }
             }
         }
 
-        // Fetch initial JSON data for each column from relative paths
-        fetch('./data1.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data1 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data1, 1); // Update the UI with the initial data for column 1
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 1:', error)
-            );
-
-        fetch('./data2.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data2 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data2, 2); // Update the UI with the initial data for column 2
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 2:', error)
-            );
-
-        fetch('./data3.json')
-            .then(response => response.json())
-            .then(jsonData => {
-                data3 = jsonData; // Store the fetched data in the data object
-                updateUIWithData(data3, 3); // Update the UI with the initial data for column 3
-            })
-            .catch(error =>
-                console.error('Error fetching the JSON data for column 3:', error)
-            );
+        // Fetch initial JSON data for each column and populate the UI
+        for (let i = 1; i <= 3; i++) {
+            fetch(`./data${i}.json`)
+                .then(response => response.json())
+                .then(jsonData => {
+                    data[`data${i}`] = jsonData; // Store the fetched data in the data object
+                    updateUIWithData(data, i); // Update the UI with the initial data for the specific column
+                })
+                .catch(error =>
+                    console.error(`Error fetching or processing data for column ${i}:`, error)
+                );
+        }
     </script>
 </body>
 
