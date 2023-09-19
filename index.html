@@ -4,55 +4,130 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON Editor</title>
+    <title>JSON editor</title>
     <style>
-        /* Your CSS styles here */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .expandable-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            overflow-y: auto;
+            max-height: 100px; /* Set a fixed initial max-height */
+            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
+        }
+
+        .expandable-container.open {
+            max-height: 500px; /* Set max-height when expanded */
+        }
+
+        .top-container {
+            width: 100%;
+            height: 250px;
+            background: url('https://i.imgur.com/0SYKRVA.jpg') no-repeat center center;
+            background-size: cover;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .expandable-container h2 {
+            margin: 0;
+            padding: 10px;
+            background: #e7e7e7;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .expandable-container h2 img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .expandable-content {
+            padding: 10px;
+            display: none;
+        }
+
+        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background: #333;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #555;
+        }
     </style>
 </head>
 
 <body>
     <div class="top-container">
-        <h1 id="columnName">Column 1</h1>
-        <img id="columnImage" src="" alt="Column Image">
+        <h1 id="Name1"></h1>
+        <img id="Image" src="" alt="Image">
     </div>
 
     <div class="container">
-        <div class="column">
-            <select id="columnSelector">
-                <option value="1">Column 1</option>
-                <option value="2">Column 2</option>
-                <option value="3">Column 3</option>
-            </select>
+        <div class="column" id="dynamicContainer1">
+            <!-- The expandable containers for column 1 will be dynamically generated here -->
         </div>
-        <div class="column" id="dynamicContainer">
-            <!-- The expandable containers for the selected column will be dynamically generated here -->
+        <div class="column" id="dynamicContainer2">
+            <!-- The expandable containers for column 2 will be dynamically generated here -->
+        </div>
+        <div class="column" id="dynamicContainer3">
+            <!-- The expandable containers for column 3 will be dynamically generated here -->
         </div>
     </div>
 
     <script>
-        const columnSelector = document.getElementById('columnSelector');
-        const columnName = document.getElementById('columnName');
-        const columnImage = document.getElementById('columnImage');
-        const dynamicContainer = document.getElementById('dynamicContainer');
+        let currentData1 = null;
+        let currentData2 = null;
+        let currentData3 = null;
 
-        const columnsData = {
-            1: { name: 'Column 1', image: 'image1.jpg' },
-            2: { name: 'Column 2', image: 'image2.jpg' },
-            3: { name: 'Column 3', image: 'image3.jpg' },
-        };
-
-        columnSelector.addEventListener('change', () => {
-            const selectedColumnIndex = parseInt(columnSelector.value);
-            const selectedColumnData = columnsData[selectedColumnIndex];
-            if (selectedColumnData) {
-                columnName.textContent = selectedColumnData.name;
-                columnImage.src = selectedColumnData.image;
-                fetch(`data${selectedColumnIndex}.json`)
-                    .then(response => response.json())
-                    .then(jsonData => updateUIWithData(jsonData))
-                    .catch(error => console.error('Error fetching JSON data:', error));
-            }
-        });
+        let data1 = {}; // Initialize an empty object for column 1 data
+        let data2 = {}; // Initialize an empty object for column 2 data
+        let data3 = {}; // Initialize an empty object for column 3 data
 
         function toggleExpand(element) {
             const content = element.nextElementSibling;
@@ -64,12 +139,65 @@
             }
         }
 
-        function saveField(fieldId) {
+        function saveField(fieldId, columnIndex) {
             const fieldValue = document.getElementById(fieldId).value;
-            console.log(`Saved ${fieldId}: ${fieldValue}`);
+            console.log(`Saved ${fieldId} in column ${columnIndex}: ${fieldValue}`);
         }
 
-        function createExpandableContainer(key, value, iconUrl) {
+        function addToFieldFromDropdown(dropdown, fieldId) {
+            const fieldValue = document.getElementById(fieldId).value;
+            const selectedValue = dropdown.value;
+            if (fieldValue) {
+                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
+            } else {
+                document.getElementById(fieldId).value = selectedValue;
+            }
+        }
+
+        function handleDoubleClick(event, columnIndex) {
+            let currentData, data;
+
+            switch (columnIndex) {
+                case 1:
+                    currentData = currentData1;
+                    data = data1;
+                    break;
+                case 2:
+                    currentData = currentData2;
+                    data = data2;
+                    break;
+                case 3:
+                    currentData = currentData3;
+                    data = data3;
+                    break;
+                default:
+                    break;
+            }
+
+            if (currentData) {
+                const clickedValue = event.target.value;
+                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+
+                // Fetch JSON data from the relative path
+                fetch(jsonUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(jsonData => {
+                        // Store the fetched data in the specific data object for the column
+                        data[currentData.key] = jsonData[currentData.key];
+                        updateUIWithData(data, columnIndex);
+                    })
+                    .catch(error =>
+                        console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
+                    );
+            }
+        }
+
+        function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
             container.className = 'expandable-container';
 
@@ -78,7 +206,22 @@
             icon.src = iconUrl;
             header.appendChild(icon);
             header.appendChild(document.createTextNode(key));
-            header.onclick = () => toggleExpand(header);
+            header.onclick = () => {
+                toggleExpand(header);
+                switch (columnIndex) {
+                    case 1:
+                        currentData1 = { key, value, iconUrl };
+                        break;
+                    case 2:
+                        currentData2 = { key, value, iconUrl };
+                        break;
+                    case 3:
+                        currentData3 = { key, value, iconUrl };
+                        break;
+                    default:
+                        break;
+                }
+            };
 
             const content = document.createElement('div');
             content.className = 'expandable-content';
@@ -97,11 +240,13 @@
                     option.innerText = item;
                     dropdown.appendChild(option);
                 });
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
                 content.appendChild(dropdown);
 
                 const input = document.createElement('input');
                 input.type = 'text';
                 input.id = key;
+                input.addEventListener('dblclick', (event) => handleDoubleClick(event, columnIndex));
                 content.appendChild(input);
             } else if (key === 'website') {
                 const iframe = document.createElement('iframe');
@@ -114,12 +259,13 @@
                 input.type = 'text';
                 input.id = key;
                 input.value = value;
+                input.addEventListener('dblclick', (event) => handleDoubleClick(event, columnIndex));
                 content.appendChild(input);
             }
 
             const saveButton = document.createElement('button');
             saveButton.innerText = 'Save Changes';
-            saveButton.onclick = () => saveField(key);
+            saveButton.onclick = () => saveField(key, columnIndex);
             content.appendChild(saveButton);
 
             container.appendChild(header);
@@ -128,9 +274,28 @@
             return container;
         }
 
-        function updateUIWithData(jsonData) {
+        function updateUIWithData(jsonData, columnIndex) {
+            let dynamicContainers;
+
+            switch (columnIndex) {
+                case 1:
+                    dynamicContainers = document.getElementById('dynamicContainer1');
+                    document.getElementById('Name1').innerText = jsonData.name; // Set the column name
+                    break;
+                case 2:
+                    dynamicContainers = document.getElementById('dynamicContainer2');
+                    document.getElementById('Name2').innerText = jsonData.name; // Set the column name
+                    break;
+                case 3:
+                    dynamicContainers = document.getElementById('dynamicContainer3');
+                    document.getElementById('Name3').innerText = jsonData.name; // Set the column name
+                    break;
+                default:
+                    break;
+            }
+
             // Clear existing containers
-            dynamicContainer.innerHTML = '';
+            dynamicContainers.innerHTML = '';
 
             // Create expandable containers for the specific column
             for (let key in jsonData) {
@@ -144,16 +309,44 @@
                     const container = createExpandableContainer(
                         key,
                         jsonData[key],
-                        jsonData.icon
+                        jsonData.icon,
+                        columnIndex
                     );
-                    dynamicContainer.appendChild(container);
+                    dynamicContainers.appendChild(container);
                 }
             }
         }
 
-        // Initialize with the first column's data
-        columnSelector.selectedIndex = 0;
-        columnSelector.dispatchEvent(new Event('change'));
+        // Fetch initial JSON data for each column from relative paths
+        fetch('./data1.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data1 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data1, 1); // Update the UI with the initial data for column 1
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data for column 1:', error)
+            );
+
+        fetch('./data2.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data2 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data2, 2); // Update the UI with the initial data for column 2
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data for column 2:', error)
+            );
+
+        fetch('./data3.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                data3 = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data3, 3); // Update the UI with the initial data for column 3
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data for column 3:', error)
+            );
     </script>
 </body>
 
