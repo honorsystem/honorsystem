@@ -104,7 +104,7 @@
 
 <body>
     <div class="top-container">
-        <h1 id="Name1"></h1>
+        <h1 id="Name"></h1>
         <img id="Image" src="" alt="Image">
     </div>
 
@@ -124,7 +124,7 @@
         let currentData1 = null;
         let currentData2 = null;
         let currentData3 = null;
-
+        
         let data1 = {}; // Initialize an empty object for column 1 data
         let data2 = {}; // Initialize an empty object for column 2 data
         let data3 = {}; // Initialize an empty object for column 3 data
@@ -153,10 +153,9 @@
                 document.getElementById(fieldId).value = selectedValue;
             }
         }
-
         function handleDoubleClick(event, columnIndex) {
             let currentData, data;
-
+        
             switch (columnIndex) {
                 case 1:
                     currentData = currentData1;
@@ -173,11 +172,11 @@
                 default:
                     break;
             }
-
+        
             if (currentData) {
                 const clickedValue = event.target.value;
                 const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-
+        
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
                     .then(response => {
@@ -196,6 +195,7 @@
                     );
             }
         }
+
 
         function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
@@ -276,24 +276,21 @@
 
         function updateUIWithData(jsonData, columnIndex) {
             let dynamicContainers;
-
+            
             switch (columnIndex) {
                 case 1:
                     dynamicContainers = document.getElementById('dynamicContainer1');
-                    document.getElementById('Name1').innerText = jsonData.name; // Set the column name
                     break;
                 case 2:
                     dynamicContainers = document.getElementById('dynamicContainer2');
-                    document.getElementById('Name2').innerText = jsonData.name; // Set the column name
                     break;
                 case 3:
                     dynamicContainers = document.getElementById('dynamicContainer3');
-                    document.getElementById('Name3').innerText = jsonData.name; // Set the column name
                     break;
                 default:
                     break;
             }
-
+            
             // Clear existing containers
             dynamicContainers.innerHTML = '';
 
