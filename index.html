@@ -1,4 +1,3 @@
-User
 <!DOCTYPE html>
 <html>
 
@@ -126,15 +125,28 @@ User
         let data = {}; // Initialize an empty object for data
 
         function toggleExpand(element) {
-            // Your toggleExpand function remains unchanged
+            const content = element.nextElementSibling;
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
+            }
         }
 
         function saveField(fieldId) {
-            // Your saveField function remains unchanged
+            const fieldValue = document.getElementById(fieldId).value;
+            console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
         function addToFieldFromDropdown(dropdown, fieldId) {
-            // Your addToFieldFromDropdown function remains unchanged
+            const fieldValue = document.getElementById(fieldId).value;
+            const selectedValue = dropdown.value;
+            if (fieldValue) {
+                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
+            } else {
+                document.getElementById(fieldId).value = selectedValue;
+            }
         }
 
         function handleDoubleClick(event, columnIndex) {
