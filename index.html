@@ -121,9 +121,6 @@
     </div>
 
     <script>
-        let currentData = null;
-        let data = {}; // Initialize an empty object for data
-
         function toggleExpand(element) {
             // Your toggleExpand function remains unchanged
         }
@@ -136,8 +133,9 @@
             // Your addToFieldFromDropdown function remains unchanged
         }
 
-        function handleDoubleClick(event, columnIndex) {
+        function handleDoubleClick(event) {
             const clickedValue = event.target.value;
+            const columnIndex = event.target.dataset.columnIndex;
             const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
 
             // Fetch JSON data from the relative path
@@ -149,8 +147,7 @@
                     return response.json();
                 })
                 .then(jsonData => {
-                    data = jsonData; // Store the fetched data in the data object
-                    updateUIWithData(data, columnIndex);
+                    updateUIWithData(jsonData, columnIndex);
                 })
                 .catch(error =>
                     console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
@@ -161,48 +158,53 @@
             // Your createExpandableContainer function remains unchanged
         }
 
-        // Fetch and populate data for each column
+        function updateUIWithData(jsonData, columnIndex) {
+            const dynamicContainers = document.getElementById(`dynamicContainer${columnIndex}`);
+            // Clear existing containers
+            dynamicContainers.innerHTML = '';
+
+            // Populate data into the expandable containers for the specified column
+            for (let key in jsonData) {
+                if (
+                    key !== "id" &&
+                    key !== "name" &&
+                    key !== "icon" &&
+                    key !== "image" &&
+                    key !== "backgroundImage"
+                ) {
+                    const container = createExpandableContainer(
+                        key,
+                        jsonData[key],
+                        jsonData.icon
+                    );
+                    dynamicContainers.appendChild(container);
+                }
+            }
+        }
+
+        // Fetch and populate data for each column separately
         for (let i = 1; i <= 3; i++) {
             fetch(`./data${i}.json`)
                 .then(response => response.json())
                 .then(jsonData => {
-                    const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-                    // Create expandable containers for the fetched data
-                    for (let key in jsonData) {
-                        if (
-                            key !== "id" &&
-                            key !== "name" &&
-                            key !== "icon" &&
-                            key !== "image" &&
-                            key !== "backgroundImage"
-                        ) {
-                            const container = createExpandableContainer(
-                                key,
-                                jsonData[key],
-                                jsonData.icon
-                            );
-                            dynamicContainers.appendChild(container);
-                        }
-                    }
+                    // Add a data-column-index attribute to each input element for later reference
+                    const inputs = document.querySelectorAll(`#dynamicContainer${i} input[type="text"]`);
+                    inputs.forEach(input => input.dataset.columnIndex = i);
                 })
                 .catch(error =>
                     console.error(`Error fetching or processing data for column ${i}:`, error)
                 );
         }
 
-        function updateUIWithData(jsonData, columnIndex) {
-            // Populate data into the Name and Image elements
-            document.getElementById('Name').textContent = `${jsonData.firstName} ${jsonData.lastName}`;
-            document.getElementById('Image').src = jsonData.image;
-
-            // Set the initial content if it's not already set
-            if (document.getElementById('Name').textContent === '') {
-                document.getElementById('Name').textContent = '';
-            }
-            if (document.getElementById('Image').src === '') {
-                document.getElementById('Image').src = '';
-            }
-        }
+        // Initially, load data for the first column (you can customize this)
+        fetch('./data1.json')
+            .then(response => response.json())
+            .then(jsonData => {
+                updateUIWithData(jsonData, 1);
+            })
+            .catch(error =>
+                console.error('Error fetching the JSON data:', error)
+            );
 
     </script>
 </body>
