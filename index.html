@@ -122,13 +122,8 @@ User
     </div>
 
     <script>
-        // Separate data and currentData for each column
-        let currentData1 = null;
-        let currentData2 = null;
-        let currentData3 = null;
-        let data1 = {};
-        let data2 = {};
-        let data3 = {};
+        let currentData = null;
+        let data = {}; // Initialize an empty object for data
 
         function toggleExpand(element) {
             // Your toggleExpand function remains unchanged
@@ -143,28 +138,9 @@ User
         }
 
         function handleDoubleClick(event, columnIndex) {
-            let currentData, data;
-
-            switch (columnIndex) {
-                case 1:
-                    currentData = currentData1;
-                    data = data1;
-                    break;
-                case 2:
-                    currentData = currentData2;
-                    data = data2;
-                    break;
-                case 3:
-                    currentData = currentData3;
-                    data = data3;
-                    break;
-                default:
-                    break;
-            }
-
             if (currentData) {
                 const clickedValue = event.target.value;
-                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+                const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
 
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
@@ -175,8 +151,8 @@ User
                         return response.json();
                     })
                     .then(jsonData => {
-                        // Store the fetched data in the specific data object for the column
-                        data[currentData.key] = jsonData[currentData.key];
+                        data = jsonData; // Store the fetched data in the data object
+                        data[currentData.key] = clickedValue; // Update the specific data key with the clicked value
                         updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
@@ -196,19 +172,7 @@ User
             header.appendChild(document.createTextNode(key));
             header.onclick = () => {
                 toggleExpand(header);
-                switch (columnIndex) {
-                    case 1:
-                        currentData1 = { key, value, iconUrl };
-                        break;
-                    case 2:
-                        currentData2 = { key, value, iconUrl };
-                        break;
-                    case 3:
-                        currentData3 = { key, value, iconUrl };
-                        break;
-                    default:
-                        break;
-                }
+                currentData = { key, value, iconUrl };
             };
 
             const content = document.createElement('div');
@@ -292,21 +256,6 @@ User
             fetch(`./data${i}.json`)
                 .then(response => response.json())
                 .then(jsonData => {
-                    // Initialize the respective data object for the column
-                    switch (i) {
-                        case 1:
-                            data1 = jsonData;
-                            break;
-                        case 2:
-                            data2 = jsonData;
-                            break;
-                        case 3:
-                            data3 = jsonData;
-                            break;
-                        default:
-                            break;
-                    }
-
                     // Create expandable containers for the fetched data
                     updateUIWithData(jsonData, i);
                 })
