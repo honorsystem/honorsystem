@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON editor</title>
     <style>
-        <body> {
+        body {
             font-family: 'Arial', sans-serif;
             background: #f4f4f4;
             padding: 20px;
@@ -28,12 +28,12 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             overflow-y: auto;
-            max-height: 100px;
-            transition: max-height 0.3s ease;
+            max-height: 100px; /* Set a fixed initial max-height */
+            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
         }
 
         .expandable-container.open {
-            max-height: 500px;
+            max-height: 500px; /* Set max-height when expanded */
         }
 
         .top-container {
@@ -99,7 +99,6 @@
         button:hover {
             background: #555;
         }
-        </body>
     </style>
 </head>
 
@@ -122,92 +121,167 @@
     </div>
 
     <script>
+        let currentData = null;
+        let data = {}; // Initialize an empty object for data
+
         function toggleExpand(element) {
-            // Your toggleExpand function remains unchanged
+            const content = element.nextElementSibling;
+            if (content.style.display === "none" || content.style.display === "") {
+                content.style.display = "block";
+            } else {
+                content.style.display = "none";
+                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
+            }
         }
 
         function saveField(fieldId) {
-            // Your saveField function remains unchanged
+            const fieldValue = document.getElementById(fieldId).value;
+            console.log(`Saved ${fieldId}: ${fieldValue}`);
         }
 
         function addToFieldFromDropdown(dropdown, fieldId) {
-            // Your addToFieldFromDropdown function remains unchanged
+            const fieldValue = document.getElementById(fieldId).value;
+            const selectedValue = dropdown.value;
+            if (fieldValue) {
+                document.getElementById(fieldId).value = `${fieldValue}, ${selectedValue}`;
+            } else {
+                document.getElementById(fieldId).value = selectedValue;
+            }
         }
 
         function handleDoubleClick(event) {
-            const clickedValue = event.target.value;
-            const columnIndex = event.target.dataset.columnIndex;
-            const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
+            if (currentData) {
+                const clickedValue = event.target.value;
+                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
 
-            // Fetch JSON data from the relative path
-            fetch(jsonUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(jsonData => {
-                    updateUIWithData(jsonData, columnIndex);
-                })
-                .catch(error =>
-                    console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
-                );
+                // Fetch JSON data from the relative path
+                fetch(jsonUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Network response was not ok: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(jsonData => {
+                        data = jsonData; // Store the fetched data in the data object
+                        updateUIWithData(data);
+                    })
+                    .catch(error =>
+                        console.error('Error fetching or processing the JSON data:', error)
+                    );
+            }
         }
 
         function createExpandableContainer(key, value, iconUrl) {
-            // Your createExpandableContainer function remains unchanged
+            const container = document.createElement('div');
+            container.className = 'expandable-container';
+
+            const header = document.createElement('h2');
+            const icon = document.createElement('img');
+            icon.src = iconUrl;
+            header.appendChild(icon);
+            header.appendChild(document.createTextNode(key));
+            header.onclick = () => {
+                toggleExpand(header);
+                currentData = { key, value, iconUrl };
+            };
+
+            const content = document.createElement('div');
+            content.className = 'expandable-content';
+
+            if (key === 'liveLocation') {
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://earth.google.com/web/';
+                iframe.style.width = '100%';
+                iframe.style.height = '200px';
+                content.appendChild(iframe);
+            } else if (Array.isArray(value)) {
+                const dropdown = document.createElement('select');
+                value.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    option.innerText = item;
+                    dropdown.appendChild(option);
+                });
+                dropdown.onchange = () => addToFieldFromDropdown(dropdown, key);
+                content.appendChild(dropdown);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                input.addEventListener('dblclick', handleDoubleClick);
+                content.appendChild(input);
+            } else if (key === 'website') {
+                const iframe = document.createElement('iframe');
+                iframe.src = value;
+                iframe.style.width = '100%';
+                iframe.style.height = '200px';
+                content.appendChild(iframe);
+            } else {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = key;
+                input.value = value;
+                input.addEventListener('dblclick', handleDoubleClick);
+                content.appendChild(input);
+            }
+
+            const saveButton = document.createElement('button');
+            saveButton.innerText = 'Save Changes';
+            saveButton.onclick = () => saveField(key);
+            content.appendChild(saveButton);
+
+            container.appendChild(header);
+            container.appendChild(content);
+
+            return container;
         }
 
-        function updateUIWithData(jsonData, columnIndex) {
-            const dynamicContainers = document.getElementById(`dynamicContainer${columnIndex}`);
+        function updateUIWithData(jsonData) {
             // Clear existing containers
-            dynamicContainers.innerHTML = '';
+            document.getElementById('dynamicContainer1').innerHTML = '';
+            document.getElementById('dynamicContainer2').innerHTML = '';
+            document.getElementById('dynamicContainer3').innerHTML = '';
 
-            // Populate data into the expandable containers for the specified column
-            for (let key in jsonData) {
-                if (
-                    key !== "id" &&
-                    key !== "name" &&
-                    key !== "icon" &&
-                    key !== "image" &&
-                    key !== "backgroundImage"
-                ) {
-                    const container = createExpandableContainer(
-                        key,
-                        jsonData[key],
-                        jsonData.icon
-                    );
-                    dynamicContainers.appendChild(container);
+            // Populate data into your HTML elements
+            document.getElementById('Name').innerText = `${jsonData.firstName} ${jsonData.lastName}`;
+            document.getElementById('Image').src = jsonData.image;
+
+            // Create expandable containers for each column
+            for (let i = 1; i <= 3; i++) {
+                const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
+                for (let key in jsonData) {
+                    if (
+                        key !== "id" &&
+                        key !== "name" &&
+                        key !== "icon" &&
+                        key !== "image" &&
+                        key !== "backgroundImage"
+                    ) {
+                        const container = createExpandableContainer(
+                            key,
+                            jsonData[key],
+                            jsonData.icon
+                        );
+                        dynamicContainers.appendChild(container);
+                    }
                 }
             }
         }
 
-        // Fetch and populate data for each column separately
-        for (let i = 1; i <= 3; i++) {
-            fetch(`./data${i}.json`)
-                .then(response => response.json())
-                .then(jsonData => {
-                    // Add a data-column-index attribute to each input element for later reference
-                    const inputs = document.querySelectorAll(`#dynamicContainer${i} input[type="text"]`);
-                    inputs.forEach(input => input.dataset.columnIndex = i);
-                })
-                .catch(error =>
-                    console.error(`Error fetching or processing data for column ${i}:`, error)
-                );
-        }
-
-        // Initially, load data for the first column (you can customize this)
-        fetch('./data1.json')
+        // Fetch initial JSON data from a relative path (you can update the file name)
+        fetch('./data.json')
             .then(response => response.json())
             .then(jsonData => {
-                updateUIWithData(jsonData, 1);
+                data = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data); // Update the UI with the initial data
             })
             .catch(error =>
                 console.error('Error fetching the JSON data:', error)
             );
 
     </script>
+
 </body>
 
 </html>
