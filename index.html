@@ -153,9 +153,10 @@
                 document.getElementById(fieldId).value = selectedValue;
             }
         }
+
         function handleDoubleClick(event, columnIndex) {
             let currentData, data;
-        
+            
             switch (columnIndex) {
                 case 1:
                     currentData = currentData1;
@@ -172,11 +173,11 @@
                 default:
                     break;
             }
-        
+
             if (currentData) {
                 const clickedValue = event.target.value;
-                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-        
+                const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
+
                 // Fetch JSON data from the relative path
                 fetch(jsonUrl)
                     .then(response => {
@@ -186,8 +187,7 @@
                         return response.json();
                     })
                     .then(jsonData => {
-                        // Store the fetched data in the specific data object for the column
-                        data[currentData.key] = jsonData[currentData.key];
+                        data = jsonData; // Store the fetched data in the data object
                         updateUIWithData(data, columnIndex);
                     })
                     .catch(error =>
@@ -195,7 +195,6 @@
                     );
             }
         }
-
 
         function createExpandableContainer(key, value, iconUrl, columnIndex) {
             const container = document.createElement('div');
