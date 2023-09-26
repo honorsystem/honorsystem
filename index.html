@@ -122,65 +122,63 @@
 
     <script>
 
-
-        <script>
-        let currentData = null;
-        let data = {}; // Initialize an empty object for data
+    let currentData = null;
+    let data = {}; // Initialize an empty object for data
 
 
 
-        function handleDoubleClick(event, columnIndex) {
-            const clickedValue = event.target.value;
-            const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
+    function handleDoubleClick(event, columnIndex) {
+        const clickedValue = event.target.value;
+        const jsonUrl = `./data${columnIndex}.json`; // Construct the relative URL for the specific column's JSON data
 
-            // Fetch JSON data from the relative path
-            fetch(jsonUrl)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
+        // Fetch JSON data from the relative path
+        fetch(jsonUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(jsonData => {
+                data = jsonData; // Store the fetched data in the data object
+                updateUIWithData(data);
+            })
+            .catch(error =>
+                console.error('Error fetching or processing the JSON data:', error)
+            );
+    }
+
+
+
+    // Fetch and populate data for each column
+    for (let i = 1; i <= 3; i++) {
+        const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
+        // Fetch and display data for each column based on the index (i)
+        fetch(`./data${i}.json`)
+            .then(response => response.json())
+            .then(jsonData => {
+                // Create expandable containers for the fetched data
+                for (let key in jsonData) {
+                    if (
+                        key !== "id" &&
+                        key !== "name" &&
+                        key !== "icon" &&
+                        key !== "image" &&
+                        key !== "backgroundImage"
+                    ) {
+                        const container = createExpandableContainer(
+                            key,
+                            jsonData[key],
+                            jsonData.icon
+                        );
+                        dynamicContainers.appendChild(container);
                     }
-                    return response.json();
-                })
-                .then(jsonData => {
-                    data = jsonData; // Store the fetched data in the data object
-                    updateUIWithData(data);
-                })
-                .catch(error =>
-                    console.error('Error fetching or processing the JSON data:', error)
-                );
-        }
-
-
-
-        // Fetch and populate data for each column
-        for (let i = 1; i <= 3; i++) {
-            const dynamicContainers = document.getElementById(`dynamicContainer${i}`);
-            // Fetch and display data for each column based on the index (i)
-            fetch(`./data${i}.json`)
-                .then(response => response.json())
-                .then(jsonData => {
-                    // Create expandable containers for the fetched data
-                    for (let key in jsonData) {
-                        if (
-                            key !== "id" &&
-                            key !== "name" &&
-                            key !== "icon" &&
-                            key !== "image" &&
-                            key !== "backgroundImage"
-                        ) {
-                            const container = createExpandableContainer(
-                                key,
-                                jsonData[key],
-                                jsonData.icon
-                            );
-                            dynamicContainers.appendChild(container);
-                        }
-                    }
-                })
-                .catch(error =>
-                    console.error(`Error fetching or processing data for column ${i}:`, error)
-                );
-        }
+                }
+            })
+            .catch(error =>
+                console.error(`Error fetching or processing data for column ${i}:`, error)
+            );
+    }
 
         function updateUIWithData(jsonData) {
             // Populate data into the Name and Image elements
