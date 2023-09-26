@@ -28,12 +28,12 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             overflow-y: auto;
-            max-height: 100px; /* Set a fixed initial max-height */
-            transition: max-height 0.3s ease; /* Add a transition for smoother expansion/collapse */
+            max-height: 100px;
+            transition: max-height 0.3s ease;
         }
 
         .expandable-container.open {
-            max-height: 500px; /* Set max-height when expanded */
+            max-height: 500px;
         }
 
         .top-container {
@@ -130,7 +130,7 @@
                 content.style.display = "block";
             } else {
                 content.style.display = "none";
-                element.parentElement.style.maxHeight = "auto"; // this will set the height to the natural height of the header
+                element.parentElement.style.maxHeight = "auto";
             }
         }
 
