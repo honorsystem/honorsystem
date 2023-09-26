@@ -173,28 +173,31 @@
                     break;
             }
         
-            if (currentData) {
-                const clickedValue = event.target.value;
-                const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
-        
-                // Fetch JSON data from the relative path
-                fetch(jsonUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Network response was not ok: ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
-                    .then(jsonData => {
-                        // Store the fetched data in the specific data object for the column
-                        data[currentData.key] = jsonData[currentData.key];
-                        updateUIWithData(data, columnIndex);
-                    })
-                    .catch(error =>
-                        console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
-                    );
+            if (!currentData) {
+                return; // Return early if currentData is null
             }
+        
+            const clickedValue = event.target.value;
+            const jsonUrl = `./${clickedValue}.json`; // Construct the relative URL
+        
+            // Fetch JSON data from the relative path
+            fetch(jsonUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(jsonData => {
+                    // Store the fetched data in the specific data object for the column
+                    data[currentData.key] = jsonData[currentData.key];
+                    updateUIWithData(data, columnIndex);
+                })
+                .catch(error =>
+                    console.error(`Error fetching or processing the JSON data for column ${columnIndex}:`, error)
+                );
         }
+
 
 
         function createExpandableContainer(key, value, iconUrl, columnIndex) {
